@@ -49,7 +49,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                 <TableCell>{customer.age}</TableCell>
                 <TableCell>{customer.nationality}</TableCell>
                 <TableCell>{customer.location}</TableCell>
-                <TableCell>{formatCurrency(customer.income)}</TableCell>
+                <TableCell className="whitespace-nowrap font-medium">{formatCurrency(customer.income)}</TableCell>
                 <TableCell>{customer.creditScore}</TableCell>
                 <TableCell>{customer.debtBurdenRatio.toFixed(2)}</TableCell>
                 <TableCell className="flex items-center gap-2">
