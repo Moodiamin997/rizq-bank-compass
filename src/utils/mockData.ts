@@ -10,10 +10,28 @@ export const CARD_TYPES = [
 
 export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabuk"];
 
+// Saudi Arabian names
+const SAUDI_FIRST_NAMES = [
+  "Mohammed", "Abdullah", "Ahmed", "Saad", "Khalid", "Fahad", "Omar", "Ali", "Saleh", "Ibrahim", 
+  "Nasser", "Saud", "Faisal", "Turki", "Abdulaziz", "Majid", "Hassan", "Waleed", "Yousef", "Nawaf",
+  "Fatima", "Aisha", "Maryam", "Sara", "Nora", "Hessa", "Lina", "Reem", "Layla", "Amira",
+  "Nouf", "Abeer", "Raneem", "Latifa", "Manal", "Ghadah", "Hala", "Dalal", "Samira", "Shahad"
+];
+
+const SAUDI_LAST_NAMES = [
+  "Al-Saud", "Al-Qahtani", "Al-Ghamdi", "Al-Shehri", "Al-Otaibi", "Al-Zahrani", "Al-Dossari", "Al-Harbi", 
+  "Al-Mutairi", "Al-Shamrani", "Al-Saleh", "Al-Faraj", "Al-Yami", "Al-Malki", "Al-Amri", "Al-Shammari",
+  "Al-Qurashi", "Al-Balawi", "Al-Anazi", "Al-Juhani", "Al-Subaie", "Al-Ruwaili", "Al-Rashidi", "Al-Buqami"
+];
+
 export const generateMockCustomers = (count = 20): Customer[] => {
   const now = Date.now();
   
   return Array.from({ length: count }, (_, i) => {
+    const firstName = SAUDI_FIRST_NAMES[Math.floor(Math.random() * SAUDI_FIRST_NAMES.length)];
+    const lastName = SAUDI_LAST_NAMES[Math.floor(Math.random() * SAUDI_LAST_NAMES.length)];
+    const fullName = `${firstName} ${lastName}`;
+    
     const age = Math.floor(Math.random() * 40) + 25; // 25-65
     const income = Math.floor(Math.random() * 15000) + 5000; // 5000-20000
     const creditScore = Math.floor(Math.random() * 300) + 500; // 500-800
@@ -23,7 +41,7 @@ export const generateMockCustomers = (count = 20): Customer[] => {
     
     return {
       id: `cust-${i + 1}`,
-      name: `Customer ${i + 1}`,
+      name: fullName,
       age,
       location: LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)],
       income,
