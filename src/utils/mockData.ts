@@ -1,3 +1,4 @@
+
 import { Customer } from "@/types";
 
 export const CARD_TYPES = [
@@ -42,10 +43,13 @@ export const generateBankOffers = (customer: Customer, settings: { prioritizeLow
   const anbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.15)) / 1000) * 1000;
   const alAhliOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.12)) / 1000) * 1000;
   
+  // Get current timestamp
+  const now = Date.now();
+  
   const offers = [
-    { bankName: "SNB", creditLimit: snbOffer, isWinner: false },
-    { bankName: "ANB", creditLimit: anbOffer, isWinner: false },
-    { bankName: "Al Ahli Bank", creditLimit: alAhliOffer, isWinner: false }
+    { bankName: "SNB", creditLimit: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) }, // Random time within last hour
+    { bankName: "ANB", creditLimit: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) }, // Random time within last 2 hours
+    { bankName: "Al Ahli Bank", creditLimit: alAhliOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) } // Random time within last 3 hours
   ];
   
   // Determine the winning offer based on settings

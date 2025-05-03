@@ -14,6 +14,7 @@ export interface BankOffer {
   bankName: string;
   creditLimit: number;
   isWinner: boolean;
+  timestamp?: number; // When the offer was made
 }
 
 export interface FilterState {

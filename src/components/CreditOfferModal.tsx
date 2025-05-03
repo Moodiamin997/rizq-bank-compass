@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { BankOffer, Customer } from "@/types";
 import { formatCurrency } from "@/utils/mockData";
 import { useToast } from "@/hooks/use-toast";
+import TimerDisplay from "@/components/TimerDisplay";
 
 interface CreditOfferModalProps {
   isOpen: boolean;
@@ -47,7 +49,8 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     const userOffer: BankOffer = {
       bankName: "Your Offer (Riyad Bank)",
       creditLimit: creditLimitValue,
-      isWinner: false
+      isWinner: false,
+      timestamp: Date.now() // Add current timestamp
     };
     
     // Add the user's offer to the list
@@ -129,7 +132,12 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                         : "bg-secondary"
                   }`}
                 >
-                  <p>{offer.bankName}</p>
+                  <div className="flex flex-col gap-1">
+                    <p>{offer.bankName}</p>
+                    {offer.timestamp && (
+                      <TimerDisplay startTime={offer.timestamp} />
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     <p>{formatCurrency(offer.creditLimit)}</p>
                     {offer.isWinner && (
