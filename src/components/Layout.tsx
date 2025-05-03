@@ -24,7 +24,7 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-            <h1 className="text-xl font-semibold text-white">Rizq Bank</h1>
+            <h1 className="text-xl font-semibold text-white">Rizq Bank Dashboard</h1>
             <Button 
               variant="ghost" 
               size="icon" 
