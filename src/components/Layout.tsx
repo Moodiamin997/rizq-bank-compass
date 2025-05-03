@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, Settings, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -68,18 +69,21 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
       {/* Main Content */}
       <div className="flex flex-1 flex-col">
         <header className="border-b border-white/10 bg-background px-6 py-4">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(true)}
-              className="mr-4 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <h1 className="text-lg font-medium">
-              {currentTab === "dashboard" ? "Applications Dashboard" : "Settings"}
-            </h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarOpen(true)}
+                className="mr-4 md:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <h1 className="text-lg font-medium">
+                {currentTab === "dashboard" ? "Applications Dashboard" : "Settings"}
+              </h1>
+            </div>
+            <ThemeToggle />
           </div>
         </header>
         <main className="flex-1 overflow-auto p-6">
