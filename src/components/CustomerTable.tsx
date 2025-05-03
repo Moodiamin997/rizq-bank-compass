@@ -25,6 +25,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Age</TableHead>
+            <TableHead>Nationality</TableHead>
             <TableHead>Location</TableHead>
             <TableHead>Income</TableHead>
             <TableHead>Credit Score</TableHead>
@@ -37,7 +38,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
         <TableBody>
           {customers.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-10">
+              <TableCell colSpan={10} className="text-center py-10">
                 No customers match the current filters
               </TableCell>
             </TableRow>
@@ -46,6 +47,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
               <TableRow key={customer.id} className="border-t border-white/10">
                 <TableCell>{customer.name}</TableCell>
                 <TableCell>{customer.age}</TableCell>
+                <TableCell>{customer.nationality}</TableCell>
                 <TableCell>{customer.location}</TableCell>
                 <TableCell>{formatCurrency(customer.income)}</TableCell>
                 <TableCell>{customer.creditScore}</TableCell>

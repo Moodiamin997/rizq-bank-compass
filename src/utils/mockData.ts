@@ -24,6 +24,12 @@ const SAUDI_LAST_NAMES = [
   "Al-Qurashi", "Al-Balawi", "Al-Anazi", "Al-Juhani", "Al-Subaie", "Al-Ruwaili", "Al-Rashidi", "Al-Buqami"
 ];
 
+// Nationalities with higher probability for Saudi Arabian
+const NATIONALITIES = [
+  "Saudi Arabian", "Saudi Arabian", "Saudi Arabian", "Saudi Arabian", "Saudi Arabian", // Higher probability for Saudi
+  "Emirati", "Kuwaiti", "Bahraini", "Omani", "Qatari", "Egyptian", "Jordanian", "Lebanese", "Yemeni"
+];
+
 export const generateMockCustomers = (count = 20): Customer[] => {
   const now = Date.now();
   
@@ -38,6 +44,8 @@ export const generateMockCustomers = (count = 20): Customer[] => {
     const debtBurdenRatio = parseFloat((Math.random() * 0.5).toFixed(2)); // 0-0.5
     // Application time between 1 minute and 18 hours ago
     const applicationTime = now - Math.floor(Math.random() * (18 * 60 * 60 * 1000) + 60000);
+    // Assign nationality with higher probability for Saudi
+    const nationality = NATIONALITIES[Math.floor(Math.random() * NATIONALITIES.length)];
     
     return {
       id: `cust-${i + 1}`,
@@ -49,6 +57,7 @@ export const generateMockCustomers = (count = 20): Customer[] => {
       debtBurdenRatio,
       appliedCard: CARD_TYPES[Math.floor(Math.random() * CARD_TYPES.length)].name,
       applicationTime,
+      nationality,
     };
   });
 };

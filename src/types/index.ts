@@ -9,6 +9,7 @@ export interface Customer {
   debtBurdenRatio: number;
   appliedCard: string;
   applicationTime?: number; // Timestamp when the application was submitted
+  nationality: string; // Added nationality field
 }
 
 export interface BankOffer {
