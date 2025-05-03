@@ -34,8 +34,24 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     }
   }, [isOpen, bankOffers]);
   
+  // Format the input with commas as the user types
+  const handleCreditLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove all non-digit characters
+    const value = e.target.value.replace(/\D/g, "");
+    
+    // Format with commas
+    if (value === "") {
+      setCreditLimit("");
+    } else {
+      setCreditLimit(Number(value).toLocaleString());
+    }
+  };
+  
   const handleSubmitOffer = () => {
-    const creditLimitValue = Number(creditLimit);
+    // Parse the credit limit by removing commas
+    const numberValue = creditLimit.replace(/,/g, "");
+    const creditLimitValue = Number(numberValue);
+    
     if (!creditLimitValue || isNaN(creditLimitValue)) {
       toast({
         title: "Invalid amount",
@@ -158,9 +174,9 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
             </label>
             <Input
               id="creditLimit"
-              placeholder="SAR 15,000"
+              placeholder="15,000"
               value={creditLimit}
-              onChange={(e) => setCreditLimit(e.target.value)}
+              onChange={handleCreditLimitChange}
               className="bg-secondary border-white/10"
             />
           </div>
