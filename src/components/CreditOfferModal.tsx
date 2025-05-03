@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,12 +19,14 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
   const [localBankOffers, setLocalBankOffers] = useState<BankOffer[]>([]);
   const [submitted, setSubmitted] = useState(false);
   
-  const winningOffer = bankOffers.find(offer => offer.isWinner);
-  
   // Reset state when modal opens with new data
   React.useEffect(() => {
     if (isOpen && bankOffers) {
-      setLocalBankOffers([...bankOffers]);
+      // Filter out any existing "Your Offer" entries when initializing
+      const filteredOffers = bankOffers.filter(offer => 
+        offer.bankName !== "Your Offer (Riyad Bank)"
+      );
+      setLocalBankOffers([...filteredOffers]);
       setSubmitted(false);
       setCreditLimit("");
     }
@@ -42,7 +43,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       return;
     }
     
-    // Create Riyad Bank user offer
+    // Create user offer
     const userOffer: BankOffer = {
       bankName: "Your Offer (Riyad Bank)",
       creditLimit: creditLimitValue,
