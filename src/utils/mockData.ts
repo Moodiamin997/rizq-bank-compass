@@ -107,5 +107,5 @@ export const generateBankOffers = (customer: Customer, settings: { prioritizeLow
 };
 
 export const formatCurrency = (amount: number): string => {
-  return `SAR ${amount.toLocaleString()}`;
+  return `﷼ ${amount.toLocaleString()}`;
 };
