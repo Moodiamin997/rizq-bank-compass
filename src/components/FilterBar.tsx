@@ -51,7 +51,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
               <SelectValue placeholder="Select Card Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Cards</SelectItem>
+              <SelectItem value="all_cards">All Cards</SelectItem>
               {CARD_TYPES.map((card) => (
                 <SelectItem key={card.name} value={card.name}>
                   {card.name}
@@ -74,7 +74,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
               <SelectValue placeholder="Select Location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Locations</SelectItem>
+              <SelectItem value="all_locations">All Locations</SelectItem>
               {LOCATIONS.map((location) => (
                 <SelectItem key={location} value={location}>
                   {location}

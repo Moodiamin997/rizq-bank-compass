@@ -17,9 +17,9 @@ const Index = () => {
   
   // State for filters
   const [filters, setFilters] = useState<FilterState>({
-    appliedCard: "",
+    appliedCard: "all_cards",
     ageRange: [25, 65],
-    location: "",
+    location: "all_locations",
     creditScoreRange: [500, 850],
     incomeLevel: [5000, 30000],
     debtBurdenRatio: [0, 0.5],
@@ -42,7 +42,7 @@ const Index = () => {
   const filteredCustomers = useMemo(() => {
     return allCustomers.filter(customer => {
       // Applied card filter
-      if (filters.appliedCard && customer.appliedCard !== filters.appliedCard) {
+      if (filters.appliedCard !== "all_cards" && customer.appliedCard !== filters.appliedCard) {
         return false;
       }
       
@@ -52,7 +52,7 @@ const Index = () => {
       }
       
       // Location filter
-      if (filters.location && customer.location !== filters.location) {
+      if (filters.location !== "all_locations" && customer.location !== filters.location) {
         return false;
       }
       
