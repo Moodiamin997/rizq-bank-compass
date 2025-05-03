@@ -66,7 +66,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                 <TableCell className="text-right">
                   <Button
                     onClick={() => onOfferCredit(customer)}
-                    variant="secondary"
+                    className="bg-[#403E43] hover:bg-[#555555] text-[#F6F6F7] border border-[#8E9196] transition-all duration-300 hover:shadow-[0_0_15px_rgba(142,145,150,0.6)] hover:border-[#aaadb0]"
                   >
                     Offer Credit
                   </Button>
