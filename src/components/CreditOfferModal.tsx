@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { BankOffer, Customer } from "@/types";
 import { formatCurrency } from "@/utils/mockData";
@@ -32,9 +32,12 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] bg-background border border-white/10">
+      <DialogContent className="sm:max-w-[500px] bg-background border border-white/10" aria-describedby="credit-offer-description">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Offer Credit to {customer.name}</DialogTitle>
+          <DialogDescription id="credit-offer-description">
+            Review the details and make a credit offer to this customer.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">

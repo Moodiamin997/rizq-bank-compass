@@ -1,3 +1,4 @@
+
 import { Customer } from "@/types";
 
 export const CARD_TYPES = [
@@ -38,12 +39,12 @@ export const generateBankOffers = (customer: Customer, settings: { prioritizeLow
   const debtFactor = 1 - customer.debtBurdenRatio;
   
   // Generate offers with some variation
-  const rajhiOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 + Math.random() * 0.1)) / 1000) * 1000;
+  const riyadBankOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 + Math.random() * 0.1)) / 1000) * 1000;
   const snbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.1)) / 1000) * 1000;
   const anbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.15)) / 1000) * 1000;
   
   const offers = [
-    { bankName: "Rajhi Bank", creditLimit: rajhiOffer, isWinner: false },
+    { bankName: "Riyad Bank", creditLimit: riyadBankOffer, isWinner: false },
     { bankName: "SNB", creditLimit: snbOffer, isWinner: false },
     { bankName: "ANB", creditLimit: anbOffer, isWinner: false }
   ];
