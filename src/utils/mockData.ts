@@ -1,4 +1,3 @@
-
 import { Customer } from "@/types";
 
 export const CARD_TYPES = [
@@ -107,5 +106,6 @@ export const generateBankOffers = (customer: Customer, settings: { prioritizeLow
 };
 
 export const formatCurrency = (amount: number): string => {
+  // Using the new Saudi Riyal symbol (image uploaded)
   return `﷼ ${amount.toLocaleString()}`;
 };
