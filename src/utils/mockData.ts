@@ -11,11 +11,15 @@ export const CARD_TYPES = [
 export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabuk"];
 
 export const generateMockCustomers = (count = 20): Customer[] => {
+  const now = Date.now();
+  
   return Array.from({ length: count }, (_, i) => {
     const age = Math.floor(Math.random() * 40) + 25; // 25-65
     const income = Math.floor(Math.random() * 15000) + 5000; // 5000-20000
     const creditScore = Math.floor(Math.random() * 300) + 500; // 500-800
     const debtBurdenRatio = parseFloat((Math.random() * 0.5).toFixed(2)); // 0-0.5
+    // Application time between 1 minute and 18 hours ago
+    const applicationTime = now - Math.floor(Math.random() * (18 * 60 * 60 * 1000) + 60000);
     
     return {
       id: `cust-${i + 1}`,
@@ -26,6 +30,7 @@ export const generateMockCustomers = (count = 20): Customer[] => {
       creditScore,
       debtBurdenRatio,
       appliedCard: CARD_TYPES[Math.floor(Math.random() * CARD_TYPES.length)].name,
+      applicationTime,
     };
   });
 };

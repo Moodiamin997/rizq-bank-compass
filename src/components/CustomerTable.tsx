@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Customer } from "@/types";
 import { formatCurrency } from "@/utils/mockData";
 import { CARD_TYPES } from "@/utils/mockData";
+import TimerDisplay from "@/components/TimerDisplay";
 
 interface CustomerTableProps {
   customers: Customer[];
@@ -29,13 +30,14 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
             <TableHead>Credit Score</TableHead>
             <TableHead>Debt Burden Ratio</TableHead>
             <TableHead>Applied Card</TableHead>
+            <TableHead>Application Time</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {customers.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-10">
+              <TableCell colSpan={9} className="text-center py-10">
                 No customers match the current filters
               </TableCell>
             </TableRow>
@@ -53,6 +55,11 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                     <span className="font-bold uppercase">{getCardLogo(customer.appliedCard)}</span>
                     <span>{customer.appliedCard}</span>
                   </div>
+                </TableCell>
+                <TableCell>
+                  {customer.applicationTime && (
+                    <TimerDisplay startTime={customer.applicationTime} />
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

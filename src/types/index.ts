@@ -8,6 +8,7 @@ export interface Customer {
   creditScore: number;
   debtBurdenRatio: number;
   appliedCard: string;
+  applicationTime?: number; // Timestamp when the application was submitted
 }
 
 export interface BankOffer {
