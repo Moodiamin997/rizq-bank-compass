@@ -28,7 +28,7 @@ const CARD_APR_RATES = {
 
 export const CreditOfferProvider = ({ children }: { children: React.ReactNode }) => {
   const [offerHistory, setOfferHistory] = useState<CreditOfferHistory[]>([
-    // Initial mock data
+    // Initial mock data with explicitly defined cobrand partners
     {
       id: "offer-1",
       customerName: "Mohammed Al-Qahtani",
@@ -38,7 +38,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Signature",
       apr: CARD_APR_RATES["Visa Signature"],
-      cobrandPartner: "jarir" // Added cobrand partner
+      cobrandPartner: "jarir" // Explicitly defined cobrand partner
     },
     {
       id: "offer-2",
@@ -50,7 +50,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       competingBank: "SNB",
       cardProduct: "Mastercard World",
       apr: CARD_APR_RATES["Mastercard World"],
-      cobrandPartner: "amazon" // Added cobrand partner
+      cobrandPartner: "amazon" // Explicitly defined cobrand partner
     },
     {
       id: "offer-3",
@@ -61,7 +61,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "pending",
       cardProduct: "Visa Infinite",
       apr: CARD_APR_RATES["Visa Infinite"],
-      cobrandPartner: "extra" // Added cobrand partner
+      cobrandPartner: "extra" // Explicitly defined cobrand partner
     },
     {
       id: "offer-4",
@@ -72,7 +72,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Platinum",
       apr: CARD_APR_RATES["Visa Platinum"],
-      cobrandPartner: "carrefour" // Added cobrand partner
+      cobrandPartner: "carrefour" // Explicitly defined cobrand partner
     },
     {
       id: "offer-5",
@@ -84,7 +84,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       competingBank: "Al Ahli Bank",
       cardProduct: "Visa Infinite",
       apr: CARD_APR_RATES["Visa Infinite"],
-      cobrandPartner: "panda" // Added cobrand partner
+      cobrandPartner: "panda" // Explicitly defined cobrand partner
     }
   ]);
 

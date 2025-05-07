@@ -63,7 +63,9 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
   }
 ];
 
+// Fix the function to not default to "none" unless truly undefined or empty
 export const getCobrandPartner = (partnerId: string | undefined): CobrandPartner => {
-  if (!partnerId) return COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner;
-  return COBRAND_PARTNERS.find(p => p.id === partnerId) || COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner;
+  if (!partnerId || partnerId === "") return COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner;
+  const partner = COBRAND_PARTNERS.find(p => p.id === partnerId);
+  return partner || (COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner);
 };

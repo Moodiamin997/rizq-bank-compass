@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -99,6 +98,18 @@ const CreditOffers = () => {
 
   // Function to render cobrand partner badge
   const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
+    // Don't pass undefined or empty string
+    if (!partnerId || partnerId === "") {
+      return (
+        <Badge
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
+          style={{ backgroundColor: "#666666", color: "white" }}
+        >
+          None
+        </Badge>
+      );
+    }
+    
     const partner = getCobrandPartner(partnerId);
     return (
       <Badge
