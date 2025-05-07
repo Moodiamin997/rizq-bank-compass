@@ -202,14 +202,11 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                   </div>
                   <div className="flex items-center gap-2">
                     <p>{formatCurrency(offer.creditLimit)}</p>
-                    {offer.isWinner && (
+                    {/* Fix: Only display one label, with proper logic */}
+                    {offer.isWinner ? (
                       <span className="text-xs font-semibold text-green-400 uppercase">Best Offer</span>
-                    )}
-                    {(offer.bankName === "Your Offer (Riyad Bank)" && !offer.isWinner) && (
+                    ) : offer.bankName === "Your Offer (Riyad Bank)" && (
                       <span className="text-xs font-semibold text-blue-400 uppercase">Your Offer</span>
-                    )}
-                    {(offer.bankName === "Your Offer (Riyad Bank)" && offer.isWinner) && (
-                      <span className="text-xs font-semibold text-green-400 uppercase">Best Offer</span>
                     )}
                   </div>
                 </div>
