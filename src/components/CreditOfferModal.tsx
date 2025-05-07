@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -6,6 +7,8 @@ import { BankOffer, Customer } from "@/types";
 import { formatCurrency } from "@/utils/mockData";
 import { useToast } from "@/hooks/use-toast";
 import TimerDisplay from "@/components/TimerDisplay";
+import { v4 as uuidv4 } from 'uuid';
+import { useCreditOffers } from "@/contexts/CreditOfferContext";
 
 interface CreditOfferModalProps {
   isOpen: boolean;
@@ -16,6 +19,7 @@ interface CreditOfferModalProps {
 
 const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOfferModalProps) => {
   const { toast } = useToast();
+  const { addOffer } = useCreditOffers();
   const [creditLimit, setCreditLimit] = useState("");
   const [localBankOffers, setLocalBankOffers] = useState<BankOffer[]>([]);
   const [submitted, setSubmitted] = useState(false);
@@ -86,6 +90,23 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     
     setLocalBankOffers(updatedOffers);
     setSubmitted(true);
+    
+    // Determine if our offer won (highest credit limit)
+    const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
+    const offerWon = highestOffer === creditLimitValue;
+    
+    // Add to global credit offer history
+    if (customer) {
+      addOffer({
+        id: uuidv4(),
+        customerName: customer.name,
+        customerLocation: customer.location,
+        timestamp: Date.now(),
+        creditLimit: creditLimitValue,
+        status: offerWon ? "won" : "pending",
+        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer)?.bankName
+      });
+    }
     
     toast({
       title: "Credit offer submitted",

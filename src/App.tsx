@@ -8,24 +8,27 @@ import CreditOffers from "./pages/CreditOffers";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { CreditOfferProvider } from "./contexts/CreditOfferContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <SonnerToaster />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/offers" element={<CreditOffers />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <CreditOfferProvider>
+        <TooltipProvider>
+          <Toaster />
+          <SonnerToaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/offers" element={<CreditOffers />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </CreditOfferProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

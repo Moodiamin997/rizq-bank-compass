@@ -6,65 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Clock } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
-
-interface CreditOfferHistory {
-  id: string;
-  customerName: string;
-  customerLocation: string;
-  timestamp: number;
-  creditLimit: number;
-  status: "won" | "lost" | "pending";
-  competingBank?: string;
-}
+import { useCreditOffers } from "@/contexts/CreditOfferContext";
 
 const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
-  
-  // Mock credit offer history data - in a real app, this would come from API or context
-  const [offerHistory] = useState<CreditOfferHistory[]>([
-    {
-      id: "offer-1",
-      customerName: "Mohammed Al-Qahtani",
-      customerLocation: "Riyadh",
-      timestamp: Date.now() - 3600000 * 2, // 2 hours ago
-      creditLimit: 25000,
-      status: "won"
-    },
-    {
-      id: "offer-2",
-      customerName: "Sara Al-Shehri",
-      customerLocation: "Jeddah",
-      timestamp: Date.now() - 3600000 * 6, // 6 hours ago
-      creditLimit: 18000,
-      status: "lost",
-      competingBank: "SNB"
-    },
-    {
-      id: "offer-3",
-      customerName: "Abdullah Al-Otaibi",
-      customerLocation: "Dammam",
-      timestamp: Date.now() - 1800000, // 30 minutes ago
-      creditLimit: 30000,
-      status: "pending"
-    },
-    {
-      id: "offer-4",
-      customerName: "Fatima Al-Harbi",
-      customerLocation: "Mecca",
-      timestamp: Date.now() - 86400000, // 1 day ago
-      creditLimit: 15000,
-      status: "won"
-    },
-    {
-      id: "offer-5",
-      customerName: "Khalid Al-Zahrani",
-      customerLocation: "Medina",
-      timestamp: Date.now() - 129600000, // 1.5 days ago
-      creditLimit: 22000,
-      status: "lost",
-      competingBank: "Al Ahli Bank"
-    }
-  ]);
+  const { offerHistory } = useCreditOffers();
 
   // Function to format date from timestamp
   const formatDate = (timestamp: number) => {
