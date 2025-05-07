@@ -122,16 +122,17 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     // Determine if our offer won (has highest credit limit, might be tied)
     const offerWon = highestOffer === creditLimitValue;
     
-    // Add to global credit offer history
+    // Add to global credit offer history - now using customer's original application time instead of current time
     if (customer) {
       addOffer({
         id: uuidv4(),
         customerName: customer.name,
         customerLocation: customer.location,
-        timestamp: Date.now(),
+        timestamp: customer.applicationTime || Date.now(), // Use original application time if available
         creditLimit: creditLimitValue,
         status: offerWon ? "won" : "pending",
-        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName
+        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName,
+        cardProduct: customer.appliedCard
       });
     }
     
@@ -165,7 +166,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
         <div className="mt-1 mb-3 flex justify-end">
           <div className="bg-secondary/60 px-3 py-1 rounded-md flex items-center gap-2">
             <span className="text-xs text-muted-foreground">Time remaining:</span>
-            <TimerDisplay startTime={requestStartTime} />
+            <TimerDisplay startTime={customer.applicationTime || requestStartTime} />
           </div>
         </div>
         
