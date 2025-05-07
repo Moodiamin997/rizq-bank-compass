@@ -1,5 +1,5 @@
 
-import { Customer } from "@/types";
+import { Customer, SettingsState } from "@/types";
 
 export const CARD_TYPES = [
   { name: "Visa Premium", logo: "visa" },
@@ -62,9 +62,9 @@ export const generateMockCustomers = (count = 20): Customer[] => {
   });
 };
 
-export const generateBankOffers = (customer: Customer, settings: { prioritizeLowestDTI: boolean }) => {
-  // Base amount calculated from income
-  const baseAmount = customer.income * 0.75;
+export const generateBankOffers = (customer: Customer, settings: SettingsState) => {
+  // Base amount calculated from income, but use defaultCreditLimit as a starting point
+  const baseAmount = settings.defaultCreditLimit * (customer.income / 10000);
   
   // Apply adjustments based on credit score and debt ratio
   const creditScoreFactor = customer.creditScore / 800;

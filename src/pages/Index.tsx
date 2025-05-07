@@ -74,14 +74,23 @@ const Index = () => {
         return false;
       }
       
+      // Decision rules from settings
+      if (customer.creditScore < settings.minCreditScore) {
+        return false;
+      }
+      
+      if (customer.debtBurdenRatio > settings.maxDebtBurdenRatio) {
+        return false;
+      }
+      
       return true;
     });
-  }, [allCustomers, filters]);
+  }, [allCustomers, filters, settings]);
   
   // Handle offering credit to a customer
   const handleOfferCredit = (customer: Customer) => {
     setSelectedCustomer(customer);
-    const offers = generateBankOffers(customer, { prioritizeLowestDTI: settings.prioritizeLowestDTI });
+    const offers = generateBankOffers(customer, settings);
     setBankOffers(offers);
     setIsModalOpen(true);
   };
