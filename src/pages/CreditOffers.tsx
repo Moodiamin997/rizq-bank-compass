@@ -14,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 const CreditOffers = () => {
@@ -140,8 +141,9 @@ const CreditOffers = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
+                                className="text-destructive hover:text-destructive-foreground hover:bg-destructive font-medium"
                                 onClick={() => handleWithdrawOffer(offer.id, offer.customerName)}
                               >
                                 Withdraw
