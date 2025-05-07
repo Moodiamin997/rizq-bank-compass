@@ -23,7 +23,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -144,6 +143,15 @@ const CreditOffers = () => {
   const openCancelDialog = (offerId: string) => {
     setSelectedOfferId(offerId);
     setShowCancelDialog(true);
+  };
+
+  // Reset dialog state completely when closing
+  const handleDialogOpenChange = (open: boolean) => {
+    setShowCancelDialog(open);
+    if (!open) {
+      setSelectedOfferId(null);
+      setCancelReason("");
+    }
   };
 
   return (
@@ -295,7 +303,7 @@ const CreditOffers = () => {
         </div>
       </div>
 
-      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+      <Dialog open={showCancelDialog} onOpenChange={handleDialogOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Card Issuance</DialogTitle>
@@ -312,7 +320,7 @@ const CreditOffers = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => handleDialogOpenChange(false)}>Cancel</Button>
             <Button 
               variant="destructive" 
               onClick={handleCancelIssue}
