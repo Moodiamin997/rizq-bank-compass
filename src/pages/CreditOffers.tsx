@@ -4,11 +4,17 @@ import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Clock, CreditCard } from "lucide-react";
+import { Check, X, Clock, CreditCard, ChevronRight } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
 import TimerDisplay from "@/components/TimerDisplay";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
@@ -125,16 +131,26 @@ const CreditOffers = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm">
-                          View Details
-                        </Button>
-                        {offer.status === "pending" && (
-                          <Button 
-                            variant="destructive" 
-                            size="sm"
-                            onClick={() => handleWithdrawOffer(offer.id, offer.customerName)}
-                          >
-                            Withdraw
+                        {offer.status === "pending" ? (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                View Actions <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => handleWithdrawOffer(offer.id, offer.customerName)}
+                              >
+                                Withdraw
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        ) : (
+                          <Button variant="outline" size="sm">
+                            View Actions
                           </Button>
                         )}
                       </div>
