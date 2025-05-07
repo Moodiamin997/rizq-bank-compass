@@ -10,7 +10,7 @@ import { generateMockCustomers, generateBankOffers } from "@/utils/mockData";
 
 const Index = () => {
   // Current tab (dashboard or settings)
-  const [currentTab, setCurrentTab] = useState<"dashboard" | "settings">("dashboard");
+  const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("dashboard");
   
   // State for customers
   const [allCustomers] = useState<Customer[]>(generateMockCustomers(30));

@@ -34,3 +34,13 @@ export interface SettingsState {
   maxDebtBurdenRatio: number;
   defaultCreditLimit: number;
 }
+
+export interface CreditOfferHistory {
+  id: string;
+  customerName: string;
+  customerLocation: string;
+  timestamp: number;
+  creditLimit: number;
+  status: "won" | "lost" | "pending";
+  competingBank?: string;
+}

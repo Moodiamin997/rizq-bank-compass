@@ -2,13 +2,14 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, Settings, X } from "lucide-react";
+import { Menu, Settings, X, CreditCard } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Link } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
-  currentTab: "dashboard" | "settings";
-  setCurrentTab: (tab: "dashboard" | "settings") => void;
+  currentTab: "dashboard" | "settings" | "offers";
+  setCurrentTab: (tab: "dashboard" | "settings" | "offers") => void;
 }
 
 const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
@@ -51,16 +52,31 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
               variant={currentTab === "dashboard" ? "secondary" : "ghost"}
               className="w-full justify-start mb-1"
               onClick={() => setCurrentTab("dashboard")}
+              asChild
             >
-              Dashboard
+              <Link to="/">Dashboard</Link>
+            </Button>
+            <Button
+              variant={currentTab === "offers" ? "secondary" : "ghost"}
+              className="w-full justify-start mb-1"
+              onClick={() => setCurrentTab("offers")}
+              asChild
+            >
+              <Link to="/offers">
+                <CreditCard className="mr-2 h-4 w-4" />
+                Credit Offers
+              </Link>
             </Button>
             <Button
               variant={currentTab === "settings" ? "secondary" : "ghost"}
               className="w-full justify-start"
               onClick={() => setCurrentTab("settings")}
+              asChild
             >
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
+              <Link to="/">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Link>
             </Button>
           </nav>
         </div>
@@ -80,7 +96,8 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
                 <Menu className="h-5 w-5" />
               </Button>
               <h1 className="text-lg font-medium">
-                {currentTab === "dashboard" ? "Applications Dashboard" : "Settings"}
+                {currentTab === "dashboard" ? "Applications Dashboard" : 
+                 currentTab === "offers" ? "Credit Offers" : "Settings"}
               </h1>
             </div>
             <ThemeToggle />
