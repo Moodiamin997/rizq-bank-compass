@@ -23,7 +23,8 @@ const CARD_APR_RATES = {
   "Visa Signature": 28,
   "Mastercard World": 32,
   "Visa Infinite": 26,
-  "Visa Platinum": 30
+  "Visa Platinum": 30,
+  "Visa Premium": 30
 };
 
 export const CreditOfferProvider = ({ children }: { children: React.ReactNode }) => {
@@ -93,6 +94,9 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     if (offer.cardProduct && CARD_APR_RATES[offer.cardProduct as keyof typeof CARD_APR_RATES]) {
       offer.apr = CARD_APR_RATES[offer.cardProduct as keyof typeof CARD_APR_RATES];
     }
+    
+    console.log("Adding new offer with cobrandPartner:", offer.cobrandPartner);
+    
     setOfferHistory(prev => [offer, ...prev]);
   };
 

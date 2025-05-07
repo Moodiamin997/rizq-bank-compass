@@ -96,9 +96,9 @@ const CreditOffers = () => {
     );
   };
 
-  // Function to render cobrand partner badge
+  // Function to render cobrand partner badge - updated to avoid showing None when partnerId exists
   const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
-    // Don't render as None if partnerId exists
+    // Skip rendering the None badge if partnerId is undefined or empty string
     if (!partnerId) {
       return (
         <Badge

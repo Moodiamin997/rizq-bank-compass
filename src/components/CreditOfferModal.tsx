@@ -122,17 +122,18 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     // Determine if our offer won (has highest credit limit, might be tied)
     const offerWon = highestOffer === creditLimitValue;
     
-    // Add to global credit offer history - now using customer's original application time instead of current time
+    // Add to global credit offer history - now including cobrandPartner from customer
     if (customer) {
       addOffer({
         id: uuidv4(),
         customerName: customer.name,
         customerLocation: customer.location,
-        timestamp: customer.applicationTime || Date.now(), // Use original application time if available
+        timestamp: customer.applicationTime || Date.now(),
         creditLimit: creditLimitValue,
         status: offerWon ? "won" : "pending",
         competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName,
-        cardProduct: customer.appliedCard
+        cardProduct: customer.appliedCard,
+        cobrandPartner: customer.cobrandPartner // Ensure cobrand partner is passed to the offer
       });
     }
     
