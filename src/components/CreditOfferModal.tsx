@@ -31,7 +31,15 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       const filteredOffers = bankOffers.filter(offer => 
         offer.bankName !== "Your Offer (Riyad Bank)"
       );
-      setLocalBankOffers([...filteredOffers]);
+      
+      // Find the highest offer and mark it as winner
+      const highestLimit = Math.max(...filteredOffers.map(o => o.creditLimit));
+      const updatedOffers = filteredOffers.map(offer => ({
+        ...offer,
+        isWinner: offer.creditLimit === highestLimit
+      }));
+      
+      setLocalBankOffers([...updatedOffers]);
       setSubmitted(false);
       setCreditLimit("");
     }
@@ -68,7 +76,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     const userOffer: BankOffer = {
       bankName: "Your Offer (Riyad Bank)",
       creditLimit: creditLimitValue,
-      isWinner: false,
+      isWinner: false, // Will be updated below
       timestamp: Date.now() // Add current timestamp
     };
     
@@ -88,11 +96,19 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       updatedOffers.push(userOffer);
     }
     
-    setLocalBankOffers(updatedOffers);
+    // Determine the highest credit limit and update isWinner flag for all offers
+    const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
+    
+    // Update isWinner flag for all offers
+    const finalOffers = updatedOffers.map(offer => ({
+      ...offer,
+      isWinner: offer.creditLimit === highestOffer
+    }));
+    
+    setLocalBankOffers(finalOffers);
     setSubmitted(true);
     
     // Determine if our offer won (highest credit limit)
-    const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
     const offerWon = highestOffer === creditLimitValue;
     
     // Add to global credit offer history
@@ -104,7 +120,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
         timestamp: Date.now(),
         creditLimit: creditLimitValue,
         status: offerWon ? "won" : "pending",
-        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer)?.bankName
+        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName
       });
     }
     
@@ -172,11 +188,13 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                 <div 
                   key={offer.bankName} 
                   className={`p-3 rounded-md flex justify-between items-center ${
-                    offer.isWinner 
+                    offer.isWinner && offer.bankName === "Your Offer (Riyad Bank)"
                       ? "bg-green-900/30 border border-green-700" 
-                      : offer.bankName === "Your Offer (Riyad Bank)"
-                        ? "bg-blue-900/30 border border-blue-700"
-                        : "bg-secondary"
+                      : offer.isWinner
+                        ? "bg-green-900/30 border border-green-700"
+                        : offer.bankName === "Your Offer (Riyad Bank)"
+                          ? "bg-blue-900/30 border border-blue-700"
+                          : "bg-secondary"
                   }`}
                 >
                   <div>
@@ -187,8 +205,11 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                     {offer.isWinner && (
                       <span className="text-xs font-semibold text-green-400 uppercase">Best Offer</span>
                     )}
-                    {offer.bankName === "Your Offer (Riyad Bank)" && (
+                    {(offer.bankName === "Your Offer (Riyad Bank)" && !offer.isWinner) && (
                       <span className="text-xs font-semibold text-blue-400 uppercase">Your Offer</span>
+                    )}
+                    {(offer.bankName === "Your Offer (Riyad Bank)" && offer.isWinner) && (
+                      <span className="text-xs font-semibold text-green-400 uppercase">Best Offer</span>
                     )}
                   </div>
                 </div>
