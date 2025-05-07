@@ -43,4 +43,6 @@ export interface CreditOfferHistory {
   creditLimit: number;
   status: "won" | "lost" | "pending";
   competingBank?: string;
+  cardProduct?: string; // Added card product field
+  apr?: number; // Added APR field
 }

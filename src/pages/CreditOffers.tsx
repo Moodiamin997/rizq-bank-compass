@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Clock } from "lucide-react";
+import { Check, X, Clock, CreditCard } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
 
@@ -50,6 +50,15 @@ const CreditOffers = () => {
     }
   };
 
+  // Function to render APR badge
+  const renderAprBadge = (apr: number) => {
+    return (
+      <Badge variant="outline" className="ml-2 text-xs bg-secondary text-secondary-foreground">
+        {apr}% APR
+      </Badge>
+    );
+  };
+
   return (
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       <div>
@@ -66,6 +75,7 @@ const CreditOffers = () => {
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Location</TableHead>
+                <TableHead>Card Product</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Credit Limit</TableHead>
                 <TableHead>Status</TableHead>
@@ -75,7 +85,7 @@ const CreditOffers = () => {
             <TableBody>
               {offerHistory.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     No credit offers made yet
                   </TableCell>
                 </TableRow>
@@ -84,6 +94,13 @@ const CreditOffers = () => {
                   <TableRow key={offer.id}>
                     <TableCell className="font-medium">{offer.customerName}</TableCell>
                     <TableCell>{offer.customerLocation}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <CreditCard className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span>{offer.cardProduct || "Visa Platinum"}</span>
+                        {renderAprBadge(offer.apr || 30)}
+                      </div>
+                    </TableCell>
                     <TableCell>{formatDate(offer.timestamp)}</TableCell>
                     <TableCell>{formatCurrency(offer.creditLimit)}</TableCell>
                     <TableCell>
