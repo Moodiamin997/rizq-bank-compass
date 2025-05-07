@@ -14,6 +14,14 @@ const CreditOfferContext = createContext<CreditOfferContextType>({
 
 export const useCreditOffers = () => useContext(CreditOfferContext);
 
+// Define consistent APR rates by card product
+const CARD_APR_RATES = {
+  "Visa Signature": 28,
+  "Mastercard World": 32,
+  "Visa Infinite": 26,
+  "Visa Platinum": 30
+};
+
 export const CreditOfferProvider = ({ children }: { children: React.ReactNode }) => {
   const [offerHistory, setOfferHistory] = useState<CreditOfferHistory[]>([
     // Initial mock data
@@ -25,7 +33,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 25000,
       status: "won",
       cardProduct: "Visa Signature",
-      apr: 28
+      apr: CARD_APR_RATES["Visa Signature"]
     },
     {
       id: "offer-2",
@@ -36,7 +44,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "lost",
       competingBank: "SNB",
       cardProduct: "Mastercard World",
-      apr: 32
+      apr: CARD_APR_RATES["Mastercard World"]
     },
     {
       id: "offer-3",
@@ -46,7 +54,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 30000,
       status: "pending",
       cardProduct: "Visa Infinite",
-      apr: 26
+      apr: CARD_APR_RATES["Visa Infinite"]
     },
     {
       id: "offer-4",
@@ -56,7 +64,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 15000,
       status: "won",
       cardProduct: "Visa Platinum",
-      apr: 30
+      apr: CARD_APR_RATES["Visa Platinum"]
     },
     {
       id: "offer-5",
@@ -67,11 +75,15 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "lost",
       competingBank: "Al Ahli Bank",
       cardProduct: "Visa Infinite",
-      apr: 24
+      apr: CARD_APR_RATES["Visa Infinite"]
     }
   ]);
 
   const addOffer = (offer: CreditOfferHistory) => {
+    // Ensure consistent APR based on card product
+    if (offer.cardProduct && CARD_APR_RATES[offer.cardProduct as keyof typeof CARD_APR_RATES]) {
+      offer.apr = CARD_APR_RATES[offer.cardProduct as keyof typeof CARD_APR_RATES];
+    }
     setOfferHistory(prev => [offer, ...prev]);
   };
 
