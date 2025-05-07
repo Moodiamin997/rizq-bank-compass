@@ -1,5 +1,5 @@
-
 import { Customer, SettingsState } from "@/types";
+import { COBRAND_PARTNERS } from "./cobrandPartners";
 
 export const CARD_TYPES = [
   { name: "Visa Premium", logo: "visa" },
@@ -30,36 +30,39 @@ const NATIONALITIES = [
   "Emirati", "Kuwaiti", "Bahraini", "Omani", "Qatari", "Egyptian", "Jordanian", "Lebanese", "Yemeni"
 ];
 
-export const generateMockCustomers = (count = 20): Customer[] => {
-  const now = Date.now();
+export const generateMockCustomers = (count: number): Customer[] => {
+  const customers: Customer[] = [];
   
-  return Array.from({ length: count }, (_, i) => {
-    const firstName = SAUDI_FIRST_NAMES[Math.floor(Math.random() * SAUDI_FIRST_NAMES.length)];
-    const lastName = SAUDI_LAST_NAMES[Math.floor(Math.random() * SAUDI_LAST_NAMES.length)];
-    const fullName = `${firstName} ${lastName}`;
+  for (let i = 0; i < count; i++) {
+    const randomCardIndex = Math.floor(Math.random() * CARD_TYPES.length);
+    const randomLocationIndex = Math.floor(Math.random() * LOCATIONS.length);
+    const randomIncome = Math.floor(Math.random() * 25000) + 5000;
+    const randomCreditScore = Math.floor(Math.random() * 350) + 500;
+    const randomDebtBurdenRatio = parseFloat((Math.random() * 0.5).toFixed(2));
+    const randomAge = Math.floor(Math.random() * 40) + 25;
+    const randomNationalityIndex = Math.floor(Math.random() * NATIONALITIES.length);
     
-    const age = Math.floor(Math.random() * 40) + 25; // 25-65
-    const income = Math.floor(Math.random() * 15000) + 5000; // 5000-20000
-    const creditScore = Math.floor(Math.random() * 300) + 500; // 500-800
-    const debtBurdenRatio = parseFloat((Math.random() * 0.5).toFixed(2)); // 0-0.5
-    // Application time between 1 minute and 18 hours ago
-    const applicationTime = now - Math.floor(Math.random() * (18 * 60 * 60 * 1000) + 60000);
-    // Assign nationality with higher probability for Saudi
-    const nationality = NATIONALITIES[Math.floor(Math.random() * NATIONALITIES.length)];
+    // Randomly select a cobrand partner (excluding the "none" option)
+    const validPartners = COBRAND_PARTNERS.filter(partner => partner.id !== "none");
+    const randomPartnerIndex = Math.floor(Math.random() * validPartners.length);
+    const randomCobrandPartner = validPartners[randomPartnerIndex].id;
     
-    return {
-      id: `cust-${i + 1}`,
-      name: fullName,
-      age,
-      location: LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)],
-      income,
-      creditScore,
-      debtBurdenRatio,
-      appliedCard: CARD_TYPES[Math.floor(Math.random() * CARD_TYPES.length)].name,
-      applicationTime,
-      nationality,
-    };
-  });
+    customers.push({
+      id: `customer-${i + 1}`,
+      name: generateRandomName(),
+      age: randomAge,
+      location: LOCATIONS[randomLocationIndex],
+      income: randomIncome,
+      creditScore: randomCreditScore,
+      debtBurdenRatio: randomDebtBurdenRatio,
+      appliedCard: CARD_TYPES[randomCardIndex].name,
+      applicationTime: Date.now() - Math.floor(Math.random() * 3600000), // Random time within the last hour
+      nationality: NATIONALITIES[randomNationalityIndex],
+      cobrandPartner: randomCobrandPartner // Assign a random cobrand partner
+    });
+  }
+  
+  return customers;
 };
 
 export const generateBankOffers = (customer: Customer, settings: SettingsState) => {
@@ -110,3 +113,9 @@ export const formatCurrency = (amount: number): string => {
   // Using the Saudi Riyal symbol with a non-breaking space for better display
   return `ريال ${amount.toLocaleString()}`;
 };
+
+function generateRandomName(): string {
+  const firstName = SAUDI_FIRST_NAMES[Math.floor(Math.random() * SAUDI_FIRST_NAMES.length)];
+  const lastName = SAUDI_LAST_NAMES[Math.floor(Math.random() * SAUDI_LAST_NAMES.length)];
+  return `${firstName} ${lastName}`;
+}

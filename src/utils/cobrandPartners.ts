@@ -1,4 +1,3 @@
-
 export interface CobrandPartner {
   id: string;
   name: string;
@@ -63,9 +62,13 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
   }
 ];
 
-// Fix the function to not default to "none" unless truly undefined or empty
 export const getCobrandPartner = (partnerId: string | undefined): CobrandPartner => {
-  if (!partnerId || partnerId === "") return COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner;
+  // If partnerId is undefined or empty string, return the "none" partner
+  if (!partnerId) return COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner;
+  
+  // Otherwise find the partner by ID
   const partner = COBRAND_PARTNERS.find(p => p.id === partnerId);
+  
+  // Return the found partner or the "none" partner if not found
   return partner || (COBRAND_PARTNERS.find(p => p.id === "none") as CobrandPartner);
 };

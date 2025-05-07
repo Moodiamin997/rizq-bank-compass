@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -20,8 +21,8 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
   };
 
   const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
-    // Don't pass undefined or empty string
-    if (!partnerId || partnerId === "") {
+    // Don't render as None if partnerId exists
+    if (!partnerId) {
       return (
         <Badge
           className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
