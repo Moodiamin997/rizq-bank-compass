@@ -7,10 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Check, X, Clock, CreditCard } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
+import TimerDisplay from "@/components/TimerDisplay";
+import { toast } from "sonner";
 
 const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
-  const { offerHistory } = useCreditOffers();
+  const { offerHistory, withdrawOffer } = useCreditOffers();
 
   // Function to format date from timestamp - updated to use 'en-US' locale for English month names
   const formatDate = (timestamp: number) => {
@@ -59,6 +61,12 @@ const CreditOffers = () => {
     );
   };
 
+  // Handle withdraw offer
+  const handleWithdrawOffer = (offerId: string, customerName: string) => {
+    withdrawOffer(offerId);
+    toast.success(`Offer to ${customerName} has been withdrawn`);
+  };
+
   return (
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       <div>
@@ -101,7 +109,14 @@ const CreditOffers = () => {
                         {renderAprBadge(offer.apr || 30)}
                       </div>
                     </TableCell>
-                    <TableCell>{formatDate(offer.timestamp)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        {formatDate(offer.timestamp)}
+                        {offer.status === "pending" && (
+                          <TimerDisplay startTime={offer.timestamp} />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>{formatCurrency(offer.creditLimit)}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
@@ -109,9 +124,20 @@ const CreditOffers = () => {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                        {offer.status === "pending" && (
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => handleWithdrawOffer(offer.id, offer.customerName)}
+                          >
+                            Withdraw
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

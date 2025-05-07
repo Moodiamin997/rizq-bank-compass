@@ -5,11 +5,13 @@ import { CreditOfferHistory } from "@/types";
 interface CreditOfferContextType {
   offerHistory: CreditOfferHistory[];
   addOffer: (offer: CreditOfferHistory) => void;
+  withdrawOffer: (offerId: string) => void;
 }
 
 const CreditOfferContext = createContext<CreditOfferContextType>({
   offerHistory: [],
   addOffer: () => {},
+  withdrawOffer: () => {},
 });
 
 export const useCreditOffers = () => useContext(CreditOfferContext);
@@ -87,8 +89,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     setOfferHistory(prev => [offer, ...prev]);
   };
 
+  const withdrawOffer = (offerId: string) => {
+    setOfferHistory(prev => prev.filter(offer => offer.id !== offerId));
+  };
+
   return (
-    <CreditOfferContext.Provider value={{ offerHistory, addOffer }}>
+    <CreditOfferContext.Provider value={{ offerHistory, addOffer, withdrawOffer }}>
       {children}
     </CreditOfferContext.Provider>
   );
