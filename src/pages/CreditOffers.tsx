@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -177,7 +176,7 @@ const CreditOffers = () => {
         <h1 className="text-2xl font-bold">Credit Offer History</h1>
         <div className="bg-secondary/40 p-4 rounded-md">
           <p className="text-sm text-muted-foreground">
-            This page shows all the credit offers you've made to customers and their current status.
+            This page shows all the credit offers you've made to customers and their current status in the past 24 hours.
           </p>
         </div>
         
