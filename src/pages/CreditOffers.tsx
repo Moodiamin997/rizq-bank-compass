@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -85,15 +86,6 @@ const CreditOffers = () => {
           </Badge>
         );
     }
-  };
-
-  // Function to render APR badge
-  const renderAprBadge = (apr: number) => {
-    return (
-      <Badge variant="outline" className="ml-2 text-xs bg-secondary text-secondary-foreground">
-        {apr}% APR
-      </Badge>
-    );
   };
 
   // Function to render cobrand partner badge - updated to avoid showing None when partnerId exists
@@ -195,7 +187,8 @@ const CreditOffers = () => {
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Location</TableHead>
-                <TableHead>Card Product</TableHead>
+                <TableHead>Card Type</TableHead>
+                <TableHead>APR</TableHead>
                 <TableHead>Cobrand Partner</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Credit Limit</TableHead>
@@ -206,7 +199,7 @@ const CreditOffers = () => {
             <TableBody>
               {offerHistory.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                     No credit offers made yet
                   </TableCell>
                 </TableRow>
@@ -219,8 +212,12 @@ const CreditOffers = () => {
                       <div className="flex items-center">
                         <CreditCard className="h-4 w-4 mr-2 text-muted-foreground" />
                         <span>{offer.cardProduct || "Visa Platinum"}</span>
-                        {renderAprBadge(offer.apr || 30)}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs bg-secondary text-secondary-foreground">
+                        {offer.apr || 30}%
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {renderCobrandPartnerBadge(offer.cobrandPartner)}
