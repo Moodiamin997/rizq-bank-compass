@@ -38,6 +38,24 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
     color: "#43A047"
   },
   {
+    id: "lulu",
+    name: "Lulu Hypermarket",
+    logoText: "Lulu",
+    color: "#E91E63"
+  },
+  {
+    id: "ikea",
+    name: "IKEA Saudi Arabia",
+    logoText: "IKEA",
+    color: "#0051BA"
+  },
+  {
+    id: "danube",
+    name: "Danube Supermarket",
+    logoText: "Danube",
+    color: "#008B48"
+  },
+  {
     id: "none",
     name: "No Partner",
     logoText: "None",

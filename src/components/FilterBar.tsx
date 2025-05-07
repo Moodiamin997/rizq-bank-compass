@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { FilterState } from "@/types";
 import { CARD_TYPES, LOCATIONS } from "@/utils/mockData";
 import { COBRAND_PARTNERS } from "@/utils/cobrandPartners";

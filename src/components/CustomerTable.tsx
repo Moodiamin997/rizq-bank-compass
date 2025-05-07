@@ -32,6 +32,15 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
     );
   };
 
+  const renderCardTypeBadge = (cardName: string) => {
+    return (
+      <div className="text-xs text-white bg-secondary px-2 py-1 rounded-full flex items-center gap-1">
+        <span className="font-bold uppercase">{getCardLogo(cardName)}</span>
+        <span>{cardName}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="rounded-md border border-white/10 overflow-hidden">
       <Table>
@@ -44,8 +53,8 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
             <TableHead>Income</TableHead>
             <TableHead>Credit Score</TableHead>
             <TableHead>Debt Burden Ratio</TableHead>
-            <TableHead>Applied Card</TableHead>
             <TableHead>Cobrand Partner</TableHead>
+            <TableHead>Card Type</TableHead>
             <TableHead>Application Time</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
@@ -67,14 +76,11 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                 <TableCell className="whitespace-nowrap font-medium">{formatCurrency(customer.income)}</TableCell>
                 <TableCell>{customer.creditScore}</TableCell>
                 <TableCell>{customer.debtBurdenRatio.toFixed(2)}</TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <div className="text-xs text-white bg-secondary px-2 py-1 rounded-full flex items-center gap-1">
-                    <span className="font-bold uppercase">{getCardLogo(customer.appliedCard)}</span>
-                    <span>{customer.appliedCard}</span>
-                  </div>
-                </TableCell>
                 <TableCell>
                   {renderCobrandPartnerBadge(customer.cobrandPartner)}
+                </TableCell>
+                <TableCell className="flex items-center gap-2">
+                  {renderCardTypeBadge(customer.appliedCard)}
                 </TableCell>
                 <TableCell>
                   {customer.applicationTime && (

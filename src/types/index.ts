@@ -1,4 +1,3 @@
-
 export interface Customer {
   id: string;
   name: string;
@@ -7,10 +6,10 @@ export interface Customer {
   income: number;
   creditScore: number;
   debtBurdenRatio: number;
-  appliedCard: string;
+  appliedCard: string;  // This remains as the card type (Visa Signature, etc.)
   applicationTime?: number; // Timestamp when the application was submitted
   nationality: string;
-  cobrandPartner?: string; // Added cobrand partner field
+  cobrandPartner?: string; // Cobrand partner field (Jarir, Amazon, etc.)
 }
 
 export interface BankOffer {
@@ -28,7 +27,7 @@ export interface FilterState {
   creditScoreRange: [number, number];
   incomeLevel: [number, number];
   debtBurdenRatio: [number, number];
-  cobrandPartner?: string; // Added cobrand partner filter
+  cobrandPartner?: string; // Cobrand partner filter
 }
 
 export interface SettingsState {
@@ -49,5 +48,5 @@ export interface CreditOfferHistory {
   cardProduct?: string;
   apr?: number;
   cancelReason?: string;
-  cobrandPartner?: string; // Added cobrand partner field
+  cobrandPartner?: string; // Cobrand partner field
 }
