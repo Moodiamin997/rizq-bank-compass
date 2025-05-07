@@ -12,9 +12,9 @@ const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
   const { offerHistory } = useCreditOffers();
 
-  // Function to format date from timestamp
+  // Function to format date from timestamp - updated to use 'en-US' locale for English month names
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('en-SA', {
+    return new Date(timestamp).toLocaleString('en-US', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
