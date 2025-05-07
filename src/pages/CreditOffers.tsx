@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -313,6 +314,8 @@ const CreditOffers = () => {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                        ) : offer.status === "issued" ? (
+                          null  // Removed the View Details button for issued cards
                         ) : offer.status !== "lost" ? (
                           <Button variant="outline" size="sm">
                             View Details
