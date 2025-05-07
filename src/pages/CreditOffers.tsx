@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Clock, CreditCard, ChevronRight } from "lucide-react";
+import { Check, X, Clock, CreditCard, ChevronRight, Lock, Download, ArrowRight, Shield } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
 import TimerDisplay from "@/components/TimerDisplay";
@@ -16,10 +16,25 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
-  const { offerHistory, withdrawOffer } = useCreditOffers();
+  const { offerHistory, withdrawOffer, updateOfferStatus } = useCreditOffers();
+  const [cancelReason, setCancelReason] = useState("");
+  const [issuingOffer, setIssuingOffer] = useState<string | null>(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
 
   // Function to format date from timestamp - updated to use 'en-US' locale for English month names
   const formatDate = (timestamp: number) => {
@@ -33,7 +48,7 @@ const CreditOffers = () => {
   };
 
   // Function to render status badge with appropriate icon and color
-  const renderStatusBadge = (status: "won" | "lost" | "pending") => {
+  const renderStatusBadge = (status: "won" | "lost" | "pending" | "issued" | "cancelled") => {
     switch (status) {
       case "won":
         return (
@@ -56,6 +71,20 @@ const CreditOffers = () => {
             Pending
           </Badge>
         );
+      case "issued":
+        return (
+          <Badge className="bg-blue-700 hover:bg-blue-800 flex items-center gap-1">
+            <CreditCard className="h-3 w-3" />
+            Issued
+          </Badge>
+        );
+      case "cancelled":
+        return (
+          <Badge className="bg-gray-700 hover:bg-gray-800 flex items-center gap-1">
+            <X className="h-3 w-3" />
+            Cancelled
+          </Badge>
+        );
     }
   };
 
@@ -72,6 +101,49 @@ const CreditOffers = () => {
   const handleWithdrawOffer = (offerId: string, customerName: string) => {
     withdrawOffer(offerId);
     toast.success(`Offer to ${customerName} has been withdrawn`);
+  };
+
+  // Handle confirm & lock
+  const handleConfirmAndLock = (offerId: string, customerName: string) => {
+    updateOfferStatus(offerId, "won");
+    toast.success(`Offer to ${customerName} has been locked`);
+  };
+
+  // Handle trigger issuance
+  const handleTriggerIssuance = (offerId: string, customerName: string) => {
+    setIssuingOffer(offerId);
+    
+    // Simulate API call to card management system
+    setTimeout(() => {
+      updateOfferStatus(offerId, "issued");
+      setIssuingOffer(null);
+      toast.success(`Card issuance for ${customerName} has been triggered successfully`);
+    }, 2000);
+  };
+
+  // Handle KYC download
+  const handleDownloadKYC = (customerName: string) => {
+    toast.success(`KYC packet for ${customerName} is being downloaded`);
+    // In a real application, this would trigger a file download
+  };
+
+  // Handle cancel issuance
+  const handleCancelIssue = () => {
+    if (selectedOfferId) {
+      const offer = offerHistory.find(o => o.id === selectedOfferId);
+      if (offer) {
+        updateOfferStatus(selectedOfferId, "cancelled", cancelReason);
+        toast.success(`Card issuance for ${offer.customerName} has been cancelled`);
+        setShowCancelDialog(false);
+        setCancelReason("");
+        setSelectedOfferId(null);
+      }
+    }
+  };
+
+  const openCancelDialog = (offerId: string) => {
+    setSelectedOfferId(offerId);
+    setShowCancelDialog(true);
   };
 
   return (
@@ -128,6 +200,22 @@ const CreditOffers = () => {
                     <TableCell>
                       <div className="flex items-center">
                         {renderStatusBadge(offer.status)}
+                        {offer.cancelReason && (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button variant="ghost" size="sm" className="ml-2 h-6 w-6 p-0">
+                                <span className="sr-only">Info</span>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <div className="space-y-2">
+                                <h4 className="font-medium">Cancellation Reason</h4>
+                                <p className="text-sm text-muted-foreground">{offer.cancelReason}</p>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -150,9 +238,51 @@ const CreditOffers = () => {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                        ) : offer.status === "won" ? (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                View Actions <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="flex items-center"
+                                onClick={() => handleConfirmAndLock(offer.id, offer.customerName)}
+                              >
+                                <Shield className="mr-2 h-4 w-4" />
+                                Confirm & Lock
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="flex items-center"
+                                onClick={() => handleTriggerIssuance(offer.id, offer.customerName)}
+                                disabled={issuingOffer === offer.id}
+                              >
+                                <ArrowRight className="mr-2 h-4 w-4" />
+                                {issuingOffer === offer.id ? "Processing..." : "Trigger Issuance"}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="flex items-center"
+                                onClick={() => handleDownloadKYC(offer.customerName)}
+                              >
+                                <Download className="mr-2 h-4 w-4" />
+                                Download KYC Packet
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive hover:text-destructive-foreground hover:bg-destructive font-medium flex items-center"
+                                onClick={() => openCancelDialog(offer.id)}
+                              >
+                                <X className="mr-2 h-4 w-4" />
+                                Cancel Issue
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         ) : (
                           <Button variant="outline" size="sm">
-                            View Actions
+                            View Details
                           </Button>
                         )}
                       </div>
@@ -164,6 +294,35 @@ const CreditOffers = () => {
           </Table>
         </div>
       </div>
+
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel Card Issuance</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for cancelling this card issuance. This action can be reversed later if needed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Textarea
+              placeholder="Reason for cancellation (e.g., suspected fraud, policy change, customer request)"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              className="min-h-[100px]"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>Cancel</Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleCancelIssue}
+              disabled={!cancelReason}
+            >
+              Confirm Cancellation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

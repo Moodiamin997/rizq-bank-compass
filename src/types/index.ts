@@ -1,4 +1,5 @@
 
+
 export interface Customer {
   id: string;
   name: string;
@@ -42,8 +43,10 @@ export interface CreditOfferHistory {
   customerLocation: string;
   timestamp: number;
   creditLimit: number;
-  status: "won" | "lost" | "pending";
+  status: "won" | "lost" | "pending" | "issued" | "cancelled";
   competingBank?: string;
   cardProduct?: string; // Added card product field
   apr?: number; // Added APR field
+  cancelReason?: string; // Added reason for cancellation
 }
+

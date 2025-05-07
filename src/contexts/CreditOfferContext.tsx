@@ -6,12 +6,14 @@ interface CreditOfferContextType {
   offerHistory: CreditOfferHistory[];
   addOffer: (offer: CreditOfferHistory) => void;
   withdrawOffer: (offerId: string) => void;
+  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string) => void;
 }
 
 const CreditOfferContext = createContext<CreditOfferContextType>({
   offerHistory: [],
   addOffer: () => {},
   withdrawOffer: () => {},
+  updateOfferStatus: () => {},
 });
 
 export const useCreditOffers = () => useContext(CreditOfferContext);
@@ -93,8 +95,18 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     setOfferHistory(prev => prev.filter(offer => offer.id !== offerId));
   };
 
+  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string) => {
+    setOfferHistory(prev => 
+      prev.map(offer => 
+        offer.id === offerId 
+          ? { ...offer, status, ...(cancelReason ? { cancelReason } : {}) }
+          : offer
+      )
+    );
+  };
+
   return (
-    <CreditOfferContext.Provider value={{ offerHistory, addOffer, withdrawOffer }}>
+    <CreditOfferContext.Provider value={{ offerHistory, addOffer, withdrawOffer, updateOfferStatus }}>
       {children}
     </CreditOfferContext.Provider>
   );
