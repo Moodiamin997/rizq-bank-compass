@@ -30,14 +30,14 @@ const CreditOffers = () => {
         return (
           <Badge className="bg-green-700 hover:bg-green-800 flex items-center gap-1">
             <Check className="h-3 w-3" />
-            Bid Won
+            Selected
           </Badge>
         );
       case "lost":
         return (
           <Badge className="bg-red-700 hover:bg-red-800 flex items-center gap-1">
             <X className="h-3 w-3" />
-            Bid Lost
+            Not Selected
           </Badge>
         );
       case "pending":
