@@ -87,13 +87,8 @@ const CreditOffers = () => {
                     <TableCell>{formatDate(offer.timestamp)}</TableCell>
                     <TableCell>{formatCurrency(offer.creditLimit)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center">
                         {renderStatusBadge(offer.status)}
-                        {offer.status === "lost" && offer.competingBank && (
-                          <span className="text-xs text-muted-foreground">
-                            to {offer.competingBank}
-                          </span>
-                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
