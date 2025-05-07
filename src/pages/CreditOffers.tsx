@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -173,27 +172,27 @@ const CreditOffers = () => {
 
   return (
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
-      <div>
-        <h1 className="text-2xl font-bold mb-6">Credit Offer History</h1>
-        <div className="bg-secondary/40 p-4 rounded-md mb-6">
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">Credit Offer History</h1>
+        <div className="bg-secondary/40 p-4 rounded-md">
           <p className="text-sm text-muted-foreground">
             This page shows all the credit offers you've made to customers and their current status.
           </p>
         </div>
         
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead>Customer</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Card Type</TableHead>
-                <TableHead>APR</TableHead>
-                <TableHead>Cobrand Partner</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Credit Limit</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[180px] font-semibold">Customer</TableHead>
+                <TableHead className="w-[120px] font-semibold">Location</TableHead>
+                <TableHead className="w-[150px] font-semibold">Card Type</TableHead>
+                <TableHead className="w-[80px] font-semibold text-center">APR</TableHead>
+                <TableHead className="w-[150px] font-semibold">Cobrand Partner</TableHead>
+                <TableHead className="w-[150px] font-semibold">Date</TableHead>
+                <TableHead className="w-[120px] font-semibold">Credit Limit</TableHead>
+                <TableHead className="w-[120px] font-semibold">Status</TableHead>
+                <TableHead className="text-right w-[120px] font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -205,7 +204,7 @@ const CreditOffers = () => {
                 </TableRow>
               ) : (
                 offerHistory.map((offer) => (
-                  <TableRow key={offer.id}>
+                  <TableRow key={offer.id} className="hover:bg-muted/30">
                     <TableCell className="font-medium">{offer.customerName}</TableCell>
                     <TableCell>{offer.customerLocation}</TableCell>
                     <TableCell>
@@ -214,7 +213,7 @@ const CreditOffers = () => {
                         <span>{offer.cardProduct || "Visa Platinum"}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">
                       <Badge variant="outline" className="text-xs bg-secondary text-secondary-foreground">
                         {offer.apr || 30}%
                       </Badge>
@@ -224,13 +223,13 @@ const CreditOffers = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
-                        {formatDate(offer.timestamp)}
+                        <span>{formatDate(offer.timestamp)}</span>
                         {offer.status === "pending" && (
                           <TimerDisplay startTime={offer.timestamp} />
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>{formatCurrency(offer.creditLimit)}</TableCell>
+                    <TableCell className="font-medium">{formatCurrency(offer.creditLimit)}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
                         {renderStatusBadge(offer.status)}
