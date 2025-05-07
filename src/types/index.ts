@@ -16,6 +16,7 @@ export interface BankOffer {
   bankName: string;
   creditLimit: number;
   isWinner: boolean;
+  isTied?: boolean; // Adding the isTied property
   timestamp?: number; // When the offer was made
 }
 
