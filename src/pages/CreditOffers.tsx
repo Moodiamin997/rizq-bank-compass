@@ -23,6 +23,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -110,19 +111,13 @@ const CreditOffers = () => {
 
   // Handle trigger issuance
   const handleTriggerIssuance = (offerId: string, customerName: string) => {
-    // Set issuing offer state only for this specific offer
     setIssuingOffer(offerId);
     
     // Simulate API call to card management system
     setTimeout(() => {
-      // Only update if this is still the offer being issued
-      // This prevents race conditions if user clicks on multiple offers
-      if (issuingOffer === offerId) {
-        updateOfferStatus(offerId, "issued");
-        // Clear the issuing state after completion
-        setIssuingOffer(null);
-        toast.success(`Card issuance for ${customerName} has been triggered successfully`);
-      }
+      updateOfferStatus(offerId, "issued");
+      setIssuingOffer(null);
+      toast.success(`Card issuance for ${customerName} has been triggered successfully`);
     }, 2000);
   };
 
@@ -139,32 +134,16 @@ const CreditOffers = () => {
       if (offer) {
         updateOfferStatus(selectedOfferId, "cancelled", cancelReason);
         toast.success(`Card issuance for ${offer.customerName} has been cancelled`);
-        // Reset all dialog-related state
-        closeDialog();
+        setShowCancelDialog(false);
+        setCancelReason("");
+        setSelectedOfferId(null);
       }
     }
   };
 
-  // Open cancel dialog with specific offer
   const openCancelDialog = (offerId: string) => {
     setSelectedOfferId(offerId);
     setShowCancelDialog(true);
-  };
-
-  // Close dialog and reset all related state
-  const closeDialog = () => {
-    setShowCancelDialog(false);
-    setSelectedOfferId(null);
-    setCancelReason("");
-  };
-
-  // Reset dialog state completely when closing
-  const handleDialogOpenChange = (open: boolean) => {
-    if (!open) {
-      closeDialog();
-    } else {
-      setShowCancelDialog(true);
-    }
   };
 
   return (
@@ -316,7 +295,7 @@ const CreditOffers = () => {
         </div>
       </div>
 
-      <Dialog open={showCancelDialog} onOpenChange={handleDialogOpenChange}>
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Card Issuance</DialogTitle>
@@ -333,7 +312,7 @@ const CreditOffers = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>Cancel</Button>
             <Button 
               variant="destructive" 
               onClick={handleCancelIssue}
