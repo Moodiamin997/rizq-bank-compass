@@ -110,13 +110,19 @@ const CreditOffers = () => {
 
   // Handle trigger issuance
   const handleTriggerIssuance = (offerId: string, customerName: string) => {
+    // Set issuing offer state only for this specific offer
     setIssuingOffer(offerId);
     
     // Simulate API call to card management system
     setTimeout(() => {
-      updateOfferStatus(offerId, "issued");
-      setIssuingOffer(null);
-      toast.success(`Card issuance for ${customerName} has been triggered successfully`);
+      // Only update if this is still the offer being issued
+      // This prevents race conditions if user clicks on multiple offers
+      if (issuingOffer === offerId) {
+        updateOfferStatus(offerId, "issued");
+        // Clear the issuing state after completion
+        setIssuingOffer(null);
+        toast.success(`Card issuance for ${customerName} has been triggered successfully`);
+      }
     }, 2000);
   };
 
@@ -133,24 +139,31 @@ const CreditOffers = () => {
       if (offer) {
         updateOfferStatus(selectedOfferId, "cancelled", cancelReason);
         toast.success(`Card issuance for ${offer.customerName} has been cancelled`);
-        setShowCancelDialog(false);
-        setCancelReason("");
-        setSelectedOfferId(null);
+        // Reset all dialog-related state
+        closeDialog();
       }
     }
   };
 
+  // Open cancel dialog with specific offer
   const openCancelDialog = (offerId: string) => {
     setSelectedOfferId(offerId);
     setShowCancelDialog(true);
   };
 
+  // Close dialog and reset all related state
+  const closeDialog = () => {
+    setShowCancelDialog(false);
+    setSelectedOfferId(null);
+    setCancelReason("");
+  };
+
   // Reset dialog state completely when closing
   const handleDialogOpenChange = (open: boolean) => {
-    setShowCancelDialog(open);
     if (!open) {
-      setSelectedOfferId(null);
-      setCancelReason("");
+      closeDialog();
+    } else {
+      setShowCancelDialog(true);
     }
   };
 
@@ -320,7 +333,7 @@ const CreditOffers = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => handleDialogOpenChange(false)}>Cancel</Button>
+            <Button variant="outline" onClick={closeDialog}>Cancel</Button>
             <Button 
               variant="destructive" 
               onClick={handleCancelIssue}
