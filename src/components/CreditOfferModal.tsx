@@ -32,11 +32,16 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
         offer.bankName !== "Your Offer (Riyad Bank)"
       );
       
-      // Find the highest offer and mark it as winner
+      // Find the highest offer and check for ties
       const highestLimit = Math.max(...filteredOffers.map(o => o.creditLimit));
+      const highestOffers = filteredOffers.filter(offer => offer.creditLimit === highestLimit);
+      const hasTie = highestOffers.length > 1;
+      
+      // Mark winners, accounting for ties
       const updatedOffers = filteredOffers.map(offer => ({
         ...offer,
-        isWinner: offer.creditLimit === highestLimit
+        isWinner: offer.creditLimit === highestLimit,
+        isTied: hasTie && offer.creditLimit === highestLimit
       }));
       
       setLocalBankOffers([...updatedOffers]);
@@ -77,6 +82,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       bankName: "Your Offer (Riyad Bank)",
       creditLimit: creditLimitValue,
       isWinner: false, // Will be updated below
+      isTied: false,   // Will be updated below
       timestamp: Date.now() // Add current timestamp
     };
     
@@ -96,19 +102,24 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       updatedOffers.push(userOffer);
     }
     
-    // Determine the highest credit limit and update isWinner flag for all offers
+    // Determine the highest credit limit
     const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
     
-    // Update isWinner flag for all offers
+    // Check for ties (multiple offers with the same highest credit limit)
+    const highestOffers = updatedOffers.filter(offer => offer.creditLimit === highestOffer);
+    const hasTie = highestOffers.length > 1;
+    
+    // Update isWinner and isTied flags for all offers
     const finalOffers = updatedOffers.map(offer => ({
       ...offer,
-      isWinner: offer.creditLimit === highestOffer
+      isWinner: offer.creditLimit === highestOffer,
+      isTied: hasTie && offer.creditLimit === highestOffer
     }));
     
     setLocalBankOffers(finalOffers);
     setSubmitted(true);
     
-    // Determine if our offer won (highest credit limit)
+    // Determine if our offer won (has highest credit limit, might be tied)
     const offerWon = highestOffer === creditLimitValue;
     
     // Add to global credit offer history
@@ -202,9 +213,10 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                   </div>
                   <div className="flex items-center gap-2">
                     <p>{formatCurrency(offer.creditLimit)}</p>
-                    {/* Fix: Only display one label, with proper logic */}
                     {offer.isWinner ? (
-                      <span className="text-xs font-semibold text-green-400 uppercase">Best Offer</span>
+                      <span className="text-xs font-semibold text-green-400 uppercase">
+                        {offer.isTied ? "Tied Offer" : "Best Offer"}
+                      </span>
                     ) : offer.bankName === "Your Offer (Riyad Bank)" && (
                       <span className="text-xs font-semibold text-blue-400 uppercase">Your Offer</span>
                     )}
