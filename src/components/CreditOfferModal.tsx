@@ -121,6 +121,9 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
   
   if (!customer) return null;
   
+  // Find the earliest timestamp among all bank offers to use as the request start time
+  const requestStartTime = Math.min(...localBankOffers.map(offer => offer.timestamp || Date.now()));
+  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[500px] bg-background border border-white/10" aria-describedby="credit-offer-description">
@@ -130,6 +133,14 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
             Review the details and make a credit offer to this customer.
           </DialogDescription>
         </DialogHeader>
+        
+        {/* Display single timer for the entire request */}
+        <div className="mt-1 mb-3 flex justify-end">
+          <div className="bg-secondary/60 px-3 py-1 rounded-md flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Time remaining:</span>
+            <TimerDisplay startTime={requestStartTime} />
+          </div>
+        </div>
         
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
@@ -168,11 +179,8 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                         : "bg-secondary"
                   }`}
                 >
-                  <div className="flex flex-col gap-1">
+                  <div>
                     <p>{offer.bankName}</p>
-                    {offer.timestamp && (
-                      <TimerDisplay startTime={offer.timestamp} />
-                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <p>{formatCurrency(offer.creditLimit)}</p>
