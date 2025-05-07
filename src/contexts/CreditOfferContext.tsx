@@ -37,7 +37,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 25000,
       status: "won",
       cardProduct: "Visa Signature",
-      apr: CARD_APR_RATES["Visa Signature"]
+      apr: CARD_APR_RATES["Visa Signature"],
+      cobrandPartner: "jarir" // Added cobrand partner
     },
     {
       id: "offer-2",
@@ -48,7 +49,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "lost",
       competingBank: "SNB",
       cardProduct: "Mastercard World",
-      apr: CARD_APR_RATES["Mastercard World"]
+      apr: CARD_APR_RATES["Mastercard World"],
+      cobrandPartner: "amazon" // Added cobrand partner
     },
     {
       id: "offer-3",
@@ -58,7 +60,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 30000,
       status: "pending",
       cardProduct: "Visa Infinite",
-      apr: CARD_APR_RATES["Visa Infinite"]
+      apr: CARD_APR_RATES["Visa Infinite"],
+      cobrandPartner: "extra" // Added cobrand partner
     },
     {
       id: "offer-4",
@@ -68,7 +71,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 15000,
       status: "won",
       cardProduct: "Visa Platinum",
-      apr: CARD_APR_RATES["Visa Platinum"]
+      apr: CARD_APR_RATES["Visa Platinum"],
+      cobrandPartner: "carrefour" // Added cobrand partner
     },
     {
       id: "offer-5",
@@ -79,7 +83,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "lost",
       competingBank: "Al Ahli Bank",
       cardProduct: "Visa Infinite",
-      apr: CARD_APR_RATES["Visa Infinite"]
+      apr: CARD_APR_RATES["Visa Infinite"],
+      cobrandPartner: "panda" // Added cobrand partner
     }
   ]);
 

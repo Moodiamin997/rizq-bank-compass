@@ -6,6 +6,8 @@ import { Customer } from "@/types";
 import { formatCurrency } from "@/utils/mockData";
 import { CARD_TYPES } from "@/utils/mockData";
 import TimerDisplay from "@/components/TimerDisplay";
+import { Badge } from "@/components/ui/badge";
+import { getCobrandPartner } from "@/utils/cobrandPartners";
 
 interface CustomerTableProps {
   customers: Customer[];
@@ -16,6 +18,18 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
   const getCardLogo = (cardName: string) => {
     const card = CARD_TYPES.find(c => c.name === cardName);
     return card ? card.logo : "default";
+  };
+
+  const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
+    const partner = getCobrandPartner(partnerId);
+    return (
+      <Badge
+        className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
+        style={{ backgroundColor: partner.color, color: "white" }}
+      >
+        {partner.logoText}
+      </Badge>
+    );
   };
 
   return (
@@ -31,6 +45,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
             <TableHead>Credit Score</TableHead>
             <TableHead>Debt Burden Ratio</TableHead>
             <TableHead>Applied Card</TableHead>
+            <TableHead>Cobrand Partner</TableHead>
             <TableHead>Application Time</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
@@ -38,7 +53,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
         <TableBody>
           {customers.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center py-10">
+              <TableCell colSpan={11} className="text-center py-10">
                 No customers match the current filters
               </TableCell>
             </TableRow>
@@ -57,6 +72,9 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                     <span className="font-bold uppercase">{getCardLogo(customer.appliedCard)}</span>
                     <span>{customer.appliedCard}</span>
                   </div>
+                </TableCell>
+                <TableCell>
+                  {renderCobrandPartnerBadge(customer.cobrandPartner)}
                 </TableCell>
                 <TableCell>
                   {customer.applicationTime && (

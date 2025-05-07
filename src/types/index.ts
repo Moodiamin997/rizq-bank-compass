@@ -1,5 +1,4 @@
 
-
 export interface Customer {
   id: string;
   name: string;
@@ -10,15 +9,16 @@ export interface Customer {
   debtBurdenRatio: number;
   appliedCard: string;
   applicationTime?: number; // Timestamp when the application was submitted
-  nationality: string; // Added nationality field
+  nationality: string;
+  cobrandPartner?: string; // Added cobrand partner field
 }
 
 export interface BankOffer {
   bankName: string;
   creditLimit: number;
   isWinner: boolean;
-  isTied?: boolean; // Adding the isTied property
-  timestamp?: number; // When the offer was made
+  isTied?: boolean;
+  timestamp?: number;
 }
 
 export interface FilterState {
@@ -28,6 +28,7 @@ export interface FilterState {
   creditScoreRange: [number, number];
   incomeLevel: [number, number];
   debtBurdenRatio: [number, number];
+  cobrandPartner?: string; // Added cobrand partner filter
 }
 
 export interface SettingsState {
@@ -45,8 +46,8 @@ export interface CreditOfferHistory {
   creditLimit: number;
   status: "won" | "lost" | "pending" | "issued" | "cancelled";
   competingBank?: string;
-  cardProduct?: string; // Added card product field
-  apr?: number; // Added APR field
-  cancelReason?: string; // Added reason for cancellation
+  cardProduct?: string;
+  apr?: number;
+  cancelReason?: string;
+  cobrandPartner?: string; // Added cobrand partner field
 }
-

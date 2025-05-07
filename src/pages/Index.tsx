@@ -23,6 +23,7 @@ const Index = () => {
     creditScoreRange: [500, 850],
     incomeLevel: [5000, 30000],
     debtBurdenRatio: [0, 0.5],
+    cobrandPartner: undefined, // Added cobrand partner filter
   });
   
   // State for settings
@@ -43,6 +44,11 @@ const Index = () => {
     return allCustomers.filter(customer => {
       // Applied card filter
       if (filters.appliedCard !== "all_cards" && customer.appliedCard !== filters.appliedCard) {
+        return false;
+      }
+      
+      // Cobrand partner filter
+      if (filters.cobrandPartner && customer.cobrandPartner !== filters.cobrandPartner) {
         return false;
       }
       

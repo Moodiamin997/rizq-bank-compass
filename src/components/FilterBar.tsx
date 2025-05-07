@@ -19,6 +19,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { FilterState } from "@/types";
 import { CARD_TYPES, LOCATIONS } from "@/utils/mockData";
+import { COBRAND_PARTNERS } from "@/utils/cobrandPartners";
 
 interface FilterBarProps {
   initialFilters: FilterState;
@@ -55,6 +56,32 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
               {CARD_TYPES.map((card) => (
                 <SelectItem key={card.name} value={card.name}>
                   {card.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Cobrand Partner Filter */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Cobrand Partner</label>
+          <Select
+            value={filters.cobrandPartner || "all_partners"}
+            onValueChange={(value) =>
+              setFilters({ 
+                ...filters, 
+                cobrandPartner: value === "all_partners" ? undefined : value 
+              })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Partner" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all_partners">All Partners</SelectItem>
+              {COBRAND_PARTNERS.filter(p => p.id !== "none").map((partner) => (
+                <SelectItem key={partner.id} value={partner.id}>
+                  {partner.name}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -23,10 +23,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getCobrandPartner } from "@/utils/cobrandPartners";
 
 const CreditOffers = () => {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "settings" | "offers">("offers");
@@ -97,6 +97,19 @@ const CreditOffers = () => {
     );
   };
 
+  // Function to render cobrand partner badge
+  const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
+    const partner = getCobrandPartner(partnerId);
+    return (
+      <Badge
+        className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
+        style={{ backgroundColor: partner.color, color: "white" }}
+      >
+        {partner.logoText}
+      </Badge>
+    );
+  };
+
   // Handle withdraw offer
   const handleWithdrawOffer = (offerId: string, customerName: string) => {
     withdrawOffer(offerId);
@@ -134,13 +147,22 @@ const CreditOffers = () => {
       if (offer) {
         updateOfferStatus(selectedOfferId, "cancelled", cancelReason);
         toast.success(`Card issuance for ${offer.customerName} has been cancelled`);
-        setShowCancelDialog(false);
-        setCancelReason("");
-        setSelectedOfferId(null);
+        handleDialogOpenChange(false);
       }
     }
   };
 
+  // Handle dialog open/close to properly reset state
+  const handleDialogOpenChange = (open: boolean) => {
+    setShowCancelDialog(open);
+    if (!open) {
+      // Reset state when dialog is closed
+      setSelectedOfferId(null);
+      setCancelReason("");
+    }
+  };
+
+  // Open cancel dialog
   const openCancelDialog = (offerId: string) => {
     setSelectedOfferId(offerId);
     setShowCancelDialog(true);
@@ -163,6 +185,7 @@ const CreditOffers = () => {
                 <TableHead>Customer</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Card Product</TableHead>
+                <TableHead>Cobrand Partner</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Credit Limit</TableHead>
                 <TableHead>Status</TableHead>
@@ -172,7 +195,7 @@ const CreditOffers = () => {
             <TableBody>
               {offerHistory.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     No credit offers made yet
                   </TableCell>
                 </TableRow>
@@ -187,6 +210,9 @@ const CreditOffers = () => {
                         <span>{offer.cardProduct || "Visa Platinum"}</span>
                         {renderAprBadge(offer.apr || 30)}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {renderCobrandPartnerBadge(offer.cobrandPartner)}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
@@ -295,7 +321,7 @@ const CreditOffers = () => {
         </div>
       </div>
 
-      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+      <Dialog open={showCancelDialog} onOpenChange={handleDialogOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Card Issuance</DialogTitle>
@@ -312,7 +338,7 @@ const CreditOffers = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => handleDialogOpenChange(false)}>Cancel</Button>
             <Button 
               variant="destructive" 
               onClick={handleCancelIssue}
