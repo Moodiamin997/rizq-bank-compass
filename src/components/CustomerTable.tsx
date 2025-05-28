@@ -47,7 +47,6 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
   const renderCardTypeBadge = (cardName: string) => {
     return (
       <div className="text-xs text-white bg-secondary px-2 py-1 rounded-full flex items-center gap-1">
-        <span className="font-bold uppercase">{getCardLogo(cardName)}</span>
         <span>{cardName}</span>
       </div>
     );
