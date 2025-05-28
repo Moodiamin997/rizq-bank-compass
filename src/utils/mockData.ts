@@ -2,10 +2,12 @@ import { Customer, SettingsState } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 
 export const CARD_TYPES = [
-  { name: "Visa Premium", logo: "visa" },
-  { name: "Mastercard Gold", logo: "mastercard" },
-  { name: "Amex Platinum", logo: "amex" },
-  { name: "Revolut Metal", logo: "revolut" }
+  { name: "Mastercard Platinum", logo: "MASTERCARD" },
+  { name: "Visa Platinum", logo: "VISA" },
+  { name: "Mastercard World", logo: "MASTERCARD" },
+  { name: "Visa Signature", logo: "VISA" },
+  { name: "Mastercard World Elite", logo: "MASTERCARD" },
+  { name: "Visa Infinite", logo: "VISA" }
 ];
 
 export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabuk"];
