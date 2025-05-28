@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -112,7 +113,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
         {/* Age Range Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Age Range</label>
-          <div className="flex items-center space-x-4 pt-2">
+          <div className="flex items-center justify-center space-x-4 pt-2">
             <Input
               type="number"
               value={filters.ageRange[0]}
@@ -146,7 +147,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
         {/* Credit Score Range Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Credit Score Range</label>
-          <div className="flex items-center space-x-4 pt-2">
+          <div className="flex items-center justify-center space-x-4 pt-2">
             <Input
               type="number"
               value={filters.creditScoreRange[0]}
@@ -186,7 +187,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
         {/* Income Level Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Income Level (SAR)</label>
-          <div className="flex items-center space-x-4 pt-2">
+          <div className="flex items-center justify-center space-x-4 pt-2">
             <Input
               type="number"
               value={filters.incomeLevel[0]}
@@ -224,7 +225,7 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
         {/* Debt Burden Ratio Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Debt Burden Ratio</label>
-          <div className="flex items-center space-x-4 pt-2">
+          <div className="flex items-center justify-center space-x-4 pt-2">
             <Input
               type="number"
               value={filters.debtBurdenRatio[0]}
