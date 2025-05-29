@@ -18,18 +18,19 @@ const CreditOfferContext = createContext<CreditOfferContextType>({
 
 export const useCreditOffers = () => useContext(CreditOfferContext);
 
-// Define consistent APR rates by card product
+// Define consistent APR rates by card product - updated to match the 6 specified card types
 const CARD_APR_RATES = {
-  "Visa Signature": 28,
-  "Mastercard World": 32,
-  "Visa Infinite": 26,
   "Visa Platinum": 30,
-  "Visa Premium": 30
+  "Visa Signature": 28,
+  "Visa Infinite": 26,
+  "Mastercard Standard": 32,
+  "Mastercard World": 32,
+  "Mastercard World Elite": 24
 };
 
 export const CreditOfferProvider = ({ children }: { children: React.ReactNode }) => {
   const [offerHistory, setOfferHistory] = useState<CreditOfferHistory[]>([
-    // Initial mock data with explicitly defined cobrand partners
+    // Initial mock data updated to use the correct card types
     {
       id: "offer-1",
       customerName: "Mohammed Al-Qahtani",
@@ -39,7 +40,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Signature",
       apr: CARD_APR_RATES["Visa Signature"],
-      cobrandPartner: "jarir" // Explicitly defined cobrand partner
+      cobrandPartner: "jarir"
     },
     {
       id: "offer-2",
@@ -51,7 +52,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       competingBank: "SNB",
       cardProduct: "Mastercard World",
       apr: CARD_APR_RATES["Mastercard World"],
-      cobrandPartner: "amazon" // Explicitly defined cobrand partner
+      cobrandPartner: "amazon"
     },
     {
       id: "offer-3",
@@ -62,7 +63,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "pending",
       cardProduct: "Visa Infinite",
       apr: CARD_APR_RATES["Visa Infinite"],
-      cobrandPartner: "extra" // Explicitly defined cobrand partner
+      cobrandPartner: "extra"
     },
     {
       id: "offer-4",
@@ -73,7 +74,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Platinum",
       apr: CARD_APR_RATES["Visa Platinum"],
-      cobrandPartner: "carrefour" // Explicitly defined cobrand partner
+      cobrandPartner: "carrefour"
     },
     {
       id: "offer-5",
@@ -83,9 +84,9 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       creditLimit: 22000,
       status: "lost",
       competingBank: "Al Ahli Bank",
-      cardProduct: "Visa Infinite",
-      apr: CARD_APR_RATES["Visa Infinite"],
-      cobrandPartner: "panda" // Explicitly defined cobrand partner
+      cardProduct: "Mastercard World Elite",
+      apr: CARD_APR_RATES["Mastercard World Elite"],
+      cobrandPartner: "panda"
     }
   ]);
 

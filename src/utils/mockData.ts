@@ -2,15 +2,13 @@ import { Customer, SettingsState } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 
 export const CARD_TYPES = [
-  { name: "Mastercard Platinum", logo: "MASTERCARD" },
   { name: "Visa Platinum", logo: "VISA" },
-  { name: "Mastercard World", logo: "MASTERCARD" },
   { name: "Visa Signature", logo: "VISA" },
-  { name: "Mastercard World Elite", logo: "MASTERCARD" },
-  { name: "Visa Infinite", logo: "VISA" }
+  { name: "Visa Infinite", logo: "VISA" },
+  { name: "Mastercard Standard", logo: "MASTERCARD" },
+  { name: "Mastercard World", logo: "MASTERCARD" },
+  { name: "Mastercard World Elite", logo: "MASTERCARD" }
 ];
-
-export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabuk"];
 
 // Saudi Arabian names
 const SAUDI_FIRST_NAMES = [
