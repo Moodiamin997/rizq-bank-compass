@@ -38,7 +38,7 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
     color: "#43A047"
   },
   {
-    id: "danube",
+    id: "danube-hypermarket",
     name: "Danube Hypermarket",
     logoText: "Danube",
     color: "#E91E63"
@@ -50,7 +50,7 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
     color: "#0051BA"
   },
   {
-    id: "danube",
+    id: "danube-supermarket",
     name: "Danube Supermarket",
     logoText: "Danube",
     color: "#008B48"
