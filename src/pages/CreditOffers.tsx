@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -74,7 +73,7 @@ const CreditOffers = () => {
       case "issued":
         return (
           <Badge className="bg-blue-700 hover:bg-blue-800 flex items-center gap-1">
-            <CreditCard className="h-3 w-3" />
+            <X className="h-3 w-3" />
             Issued
           </Badge>
         );
@@ -209,10 +208,7 @@ const CreditOffers = () => {
                     <TableCell className="font-medium">{offer.customerName}</TableCell>
                     <TableCell>{offer.customerLocation}</TableCell>
                     <TableCell>
-                      <div className="flex items-center">
-                        <CreditCard className="h-4 w-4 mr-2 text-muted-foreground" />
-                        <span>{offer.cardProduct || "Visa Platinum"}</span>
-                      </div>
+                      <span>{offer.cardProduct || "Visa Platinum"}</span>
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant="outline" className="text-xs bg-secondary text-secondary-foreground">
@@ -223,11 +219,13 @@ const CreditOffers = () => {
                       {renderCobrandPartnerBadge(offer.cobrandPartner)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col">
+                      <div className="flex flex-col min-h-[60px]">
                         <span>{formatDate(offer.timestamp)}</span>
-                        {offer.status === "pending" && (
-                          <TimerDisplay startTime={offer.timestamp} />
-                        )}
+                        <div className="h-[20px] flex items-center">
+                          {offer.status === "pending" && (
+                            <TimerDisplay startTime={offer.timestamp} />
+                          )}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{formatCurrency(offer.creditLimit)}</TableCell>
