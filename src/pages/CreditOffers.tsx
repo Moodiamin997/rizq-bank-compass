@@ -219,9 +219,9 @@ const CreditOffers = () => {
                       {renderCobrandPartnerBadge(offer.cobrandPartner)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col min-h-[60px]">
-                        <span>{formatDate(offer.timestamp)}</span>
-                        <div className="h-[20px] flex items-center">
+                      <div className="flex flex-col h-[80px] justify-start">
+                        <span className="mb-1">{formatDate(offer.timestamp)}</span>
+                        <div className="h-[24px] w-full flex items-start">
                           {offer.status === "pending" && (
                             <TimerDisplay startTime={offer.timestamp} />
                           )}
