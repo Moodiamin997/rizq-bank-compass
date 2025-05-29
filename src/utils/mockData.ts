@@ -30,6 +30,8 @@ const NATIONALITIES = [
   "Emirati", "Kuwaiti", "Bahraini", "Omani", "Qatari", "Egyptian", "Jordanian", "Lebanese", "Yemeni"
 ];
 
+export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabuk"];
+
 export const generateMockCustomers = (count: number): Customer[] => {
   const customers: Customer[] = [];
   
