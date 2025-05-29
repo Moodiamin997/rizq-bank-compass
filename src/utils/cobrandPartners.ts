@@ -1,3 +1,4 @@
+
 export interface CobrandPartner {
   id: string;
   name: string;
@@ -37,9 +38,9 @@ export const COBRAND_PARTNERS: CobrandPartner[] = [
     color: "#43A047"
   },
   {
-    id: "lulu",
-    name: "Lulu Hypermarket",
-    logoText: "Lulu",
+    id: "danube",
+    name: "Danube Hypermarket",
+    logoText: "Danube",
     color: "#E91E63"
   },
   {
