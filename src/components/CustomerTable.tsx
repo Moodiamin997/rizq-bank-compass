@@ -25,7 +25,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
     if (!partnerId) {
       return (
         <Badge
-          className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center"
+          className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center w-fit"
           style={{ backgroundColor: "#666666", color: "white" }}
         >
           None
@@ -36,7 +36,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
     const partner = getCobrandPartner(partnerId);
     return (
       <Badge
-        className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center"
+        className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center w-fit"
         style={{ backgroundColor: partner.color, color: "white" }}
       >
         {partner.logoText}

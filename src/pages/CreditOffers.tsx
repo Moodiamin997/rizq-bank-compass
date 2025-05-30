@@ -87,13 +87,13 @@ const CreditOffers = () => {
     }
   };
 
-  // Function to render cobrand partner badge - updated to avoid showing None when partnerId exists
+  // Function to render cobrand partner badge - updated to center text properly
   const renderCobrandPartnerBadge = (partnerId: string | undefined) => {
     // Skip rendering the None badge if partnerId is undefined or empty string
     if (!partnerId) {
       return (
         <Badge
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
+          className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center w-fit"
           style={{ backgroundColor: "#666666", color: "white" }}
         >
           None
@@ -104,7 +104,7 @@ const CreditOffers = () => {
     const partner = getCobrandPartner(partnerId);
     return (
       <Badge
-        className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full"
+        className="flex items-center justify-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-center w-fit"
         style={{ backgroundColor: partner.color, color: "white" }}
       >
         {partner.logoText}
