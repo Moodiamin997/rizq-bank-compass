@@ -1,3 +1,4 @@
+
 import { Customer, SettingsState } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 
@@ -34,6 +35,7 @@ export const LOCATIONS = ["Riyadh", "Jeddah", "Dammam", "Mecca", "Medina", "Tabu
 
 export const generateMockCustomers = (count: number): Customer[] => {
   const customers: Customer[] = [];
+  const now = Date.now();
   
   for (let i = 0; i < count; i++) {
     const randomCardIndex = Math.floor(Math.random() * CARD_TYPES.length);
@@ -43,6 +45,13 @@ export const generateMockCustomers = (count: number): Customer[] => {
     const randomDebtBurdenRatio = parseFloat((Math.random() * 0.5).toFixed(2));
     const randomAge = Math.floor(Math.random() * 40) + 25;
     const randomNationalityIndex = Math.floor(Math.random() * NATIONALITIES.length);
+    
+    // Create more realistic, varied application times
+    // Random time between 5 minutes ago and 23 hours ago
+    const minTimeAgo = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const maxTimeAgo = 23 * 60 * 60 * 1000; // 23 hours in milliseconds
+    const randomTimeAgo = Math.floor(Math.random() * (maxTimeAgo - minTimeAgo)) + minTimeAgo;
+    const applicationTime = now - randomTimeAgo;
     
     // Randomly select a cobrand partner (excluding the "none" option)
     const validPartners = COBRAND_PARTNERS.filter(partner => partner.id !== "none");
@@ -58,9 +67,9 @@ export const generateMockCustomers = (count: number): Customer[] => {
       creditScore: randomCreditScore,
       debtBurdenRatio: randomDebtBurdenRatio,
       appliedCard: CARD_TYPES[randomCardIndex].name,
-      applicationTime: Date.now() - Math.floor(Math.random() * 3600000), // Random time within the last hour
+      applicationTime: applicationTime,
       nationality: NATIONALITIES[randomNationalityIndex],
-      cobrandPartner: randomCobrandPartner // Assign a random cobrand partner
+      cobrandPartner: randomCobrandPartner
     });
   }
   
