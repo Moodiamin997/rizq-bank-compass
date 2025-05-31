@@ -67,7 +67,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
             <TableHead>Cobrand Partner</TableHead>
             <TableHead>Card Type</TableHead>
             <TableHead>Application Time</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -98,7 +98,7 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                     <TimerDisplay startTime={customer.applicationTime} />
                   )}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-center">
                   <Button
                     onClick={() => onOfferCredit(customer)}
                     className="bg-[#403E43] hover:bg-[#555555] text-[#F6F6F7] border border-[#8E9196] transition-all duration-300 hover:shadow-[0_0_15px_rgba(142,145,150,0.6)] hover:border-[#aaadb0]"
