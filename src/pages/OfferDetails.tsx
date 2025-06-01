@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -44,20 +45,27 @@ const OfferDetails = () => {
     // Store the existing offer for the modal
     setExistingOffer(offer);
 
-    // Reconstruct customer data from the offer
+    // Reconstruct customer data using stored financial data if available
     const reconstructedCustomer: Customer = {
       id: `customer-${offerId}`,
       name: offer.customerName,
-      age: 35, // Default age since we don't store it
+      age: offer.customerAge || 35, // Use stored age or default
       location: offer.customerLocation,
-      income: Math.floor(offer.creditLimit * 2.5), // Estimate income from credit limit
-      creditScore: 650, // Default credit score
-      debtBurdenRatio: 0.3, // Default debt burden ratio
+      income: offer.customerIncome || 75000, // Use stored income or default
+      creditScore: offer.customerCreditScore || 650, // Use stored credit score or default
+      debtBurdenRatio: offer.customerDebtBurdenRatio || 0.3, // Use stored DTI or default
       appliedCard: offer.cardProduct || "Visa Platinum",
       applicationTime: offer.timestamp,
-      nationality: "Saudi Arabian", // Default nationality
+      nationality: offer.customerNationality || "Saudi Arabian", // Use stored nationality or default
       cobrandPartner: offer.cobrandPartner
     };
+
+    console.log("Reconstructed customer with stored financial data:", {
+      income: reconstructedCustomer.income,
+      creditScore: reconstructedCustomer.creditScore,
+      debtBurdenRatio: reconstructedCustomer.debtBurdenRatio,
+      age: reconstructedCustomer.age
+    });
 
     setCustomer(reconstructedCustomer);
 

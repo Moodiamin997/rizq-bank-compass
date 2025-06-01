@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from "react";
 import { CreditOfferHistory, BankOffer } from "@/types";
 
@@ -29,7 +30,7 @@ const CARD_APR_RATES = {
 
 export const CreditOfferProvider = ({ children }: { children: React.ReactNode }) => {
   const [offerHistory, setOfferHistory] = useState<CreditOfferHistory[]>([
-    // Initial mock data updated to use the correct card types
+    // Initial mock data updated with customer financial data
     {
       id: "offer-1",
       customerName: "Mohammed Al-Qahtani",
@@ -39,7 +40,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Signature",
       apr: CARD_APR_RATES["Visa Signature"],
-      cobrandPartner: "jarir"
+      cobrandPartner: "jarir",
+      customerIncome: 85000,
+      customerCreditScore: 720,
+      customerDebtBurdenRatio: 0.25,
+      customerAge: 34,
+      customerNationality: "Saudi Arabian"
     },
     {
       id: "offer-2",
@@ -51,7 +57,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       competingBank: "SNB",
       cardProduct: "Mastercard World",
       apr: CARD_APR_RATES["Mastercard World"],
-      cobrandPartner: "amazon"
+      cobrandPartner: "amazon",
+      customerIncome: 65000,
+      customerCreditScore: 680,
+      customerDebtBurdenRatio: 0.35,
+      customerAge: 29,
+      customerNationality: "Saudi Arabian"
     },
     {
       id: "offer-3",
@@ -62,7 +73,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "pending",
       cardProduct: "Visa Infinite",
       apr: CARD_APR_RATES["Visa Infinite"],
-      cobrandPartner: "extra"
+      cobrandPartner: "extra",
+      customerIncome: 95000,
+      customerCreditScore: 750,
+      customerDebtBurdenRatio: 0.20,
+      customerAge: 41,
+      customerNationality: "Saudi Arabian"
     },
     {
       id: "offer-4",
@@ -73,7 +89,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       status: "won",
       cardProduct: "Visa Platinum",
       apr: CARD_APR_RATES["Visa Platinum"],
-      cobrandPartner: "carrefour"
+      cobrandPartner: "carrefour",
+      customerIncome: 55000,
+      customerCreditScore: 640,
+      customerDebtBurdenRatio: 0.40,
+      customerAge: 27,
+      customerNationality: "Saudi Arabian"
     },
     {
       id: "offer-5",
@@ -85,7 +106,12 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       competingBank: "Rajhi Bank",
       cardProduct: "Mastercard World Elite",
       apr: CARD_APR_RATES["Mastercard World Elite"],
-      cobrandPartner: "panda"
+      cobrandPartner: "panda",
+      customerIncome: 78000,
+      customerCreditScore: 695,
+      customerDebtBurdenRatio: 0.30,
+      customerAge: 38,
+      customerNationality: "Saudi Arabian"
     }
   ]);
 
@@ -97,6 +123,11 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     
     console.log("Adding new offer with cobrandPartner:", offer.cobrandPartner);
     console.log("Adding new offer with competingOffers:", offer.competingOffers);
+    console.log("Adding new offer with customer financial data:", {
+      income: offer.customerIncome,
+      creditScore: offer.customerCreditScore,
+      debtBurdenRatio: offer.customerDebtBurdenRatio
+    });
     
     setOfferHistory(prev => [offer, ...prev]);
   };

@@ -171,7 +171,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     if (existingOffer && customer) {
       updateOfferStatus(existingOffer.id, finalStatus, undefined, creditLimitValue, finalOffers);
     } else if (customer) {
-      // Add to global credit offer history with competing offers
+      // Add to global credit offer history with competing offers and customer financial data
       addOffer({
         id: uuidv4(),
         customerName: customer.name,
@@ -182,7 +182,13 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
         competingBank: finalStatus === "pending" ? updatedOffers.find(o => o.creditLimit === finalHighestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName : undefined,
         cardProduct: customer.appliedCard,
         cobrandPartner: customer.cobrandPartner,
-        competingOffers: finalOffers
+        competingOffers: finalOffers,
+        // Store customer financial data to preserve it
+        customerIncome: customer.income,
+        customerCreditScore: customer.creditScore,
+        customerDebtBurdenRatio: customer.debtBurdenRatio,
+        customerAge: customer.age,
+        customerNationality: customer.nationality
       });
     }
     

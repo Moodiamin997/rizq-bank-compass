@@ -52,4 +52,10 @@ export interface CreditOfferHistory {
   cancelReason?: string;
   cobrandPartner?: string; // Cobrand partner field
   competingOffers?: BankOffer[]; // Store the final state of all bank offers
+  // Store original customer financial data
+  customerIncome?: number;
+  customerCreditScore?: number;
+  customerDebtBurdenRatio?: number;
+  customerAge?: number;
+  customerNationality?: string;
 }
