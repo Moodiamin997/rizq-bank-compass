@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from "react";
 import { CreditOfferHistory } from "@/types";
 
@@ -5,7 +6,7 @@ interface CreditOfferContextType {
   offerHistory: CreditOfferHistory[];
   addOffer: (offer: CreditOfferHistory) => void;
   withdrawOffer: (offerId: string) => void;
-  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string) => void;
+  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number) => void;
 }
 
 const CreditOfferContext = createContext<CreditOfferContextType>({
@@ -104,11 +105,16 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     setOfferHistory(prev => prev.filter(offer => offer.id !== offerId));
   };
 
-  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string) => {
+  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number) => {
     setOfferHistory(prev => 
       prev.map(offer => 
         offer.id === offerId 
-          ? { ...offer, status, ...(cancelReason ? { cancelReason } : {}) }
+          ? { 
+              ...offer, 
+              status, 
+              ...(cancelReason ? { cancelReason } : {}),
+              ...(creditLimit !== undefined ? { creditLimit } : {})
+            }
           : offer
       )
     );

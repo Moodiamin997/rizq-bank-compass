@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -135,9 +134,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     
     // If this is updating an existing offer, update it; otherwise add new offer
     if (existingOffer && customer) {
-      updateOfferStatus(existingOffer.id, offerWon ? "won" : "pending");
-      // Also update the credit limit in the existing offer
-      // Note: This would require extending the context to support credit limit updates
+      updateOfferStatus(existingOffer.id, offerWon ? "won" : "pending", undefined, creditLimitValue);
     } else if (customer) {
       // Add to global credit offer history - now including cobrandPartner from customer
       addOffer({
