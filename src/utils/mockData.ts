@@ -1,4 +1,4 @@
-import { Customer, SettingsState } from "@/types";
+import { Customer, SettingsState, BankOffer } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 
 export const CARD_TYPES = [
@@ -117,6 +117,46 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
   }
   
   return offers;
+};
+
+export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer: BankOffer): BankOffer[] => {
+  const userCreditLimit = userOffer.creditLimit;
+  const highestCurrentOffer = Math.max(...currentOffers.map(o => o.creditLimit));
+  
+  // Only improve offers if user's offer ties with or beats the current highest
+  if (userCreditLimit < highestCurrentOffer) {
+    return currentOffers;
+  }
+  
+  const improvedOffers = currentOffers.map(offer => {
+    // Skip user's own offers
+    if (offer.bankName.includes("Your") || offer.bankName.includes("Riyad Bank")) {
+      return offer;
+    }
+    
+    // 70% chance a bank will improve their offer when faced with competition
+    const willImprove = Math.random() < 0.7;
+    
+    if (willImprove && offer.creditLimit <= userCreditLimit) {
+      // Improve by 5-15% above the user's offer
+      const improvementFactor = 1.05 + (Math.random() * 0.10); // 5-15% improvement
+      const newLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000; // Round to nearest 1000
+      
+      // Cap at reasonable limits (don't exceed 200% of original offer)
+      const maxLimit = offer.creditLimit * 2;
+      const improvedLimit = Math.min(newLimit, maxLimit);
+      
+      return {
+        ...offer,
+        creditLimit: improvedLimit,
+        timestamp: Date.now() // Update timestamp to show this is a new offer
+      };
+    }
+    
+    return offer;
+  });
+  
+  return improvedOffers;
 };
 
 export const formatCurrency = (amount: number): string => {

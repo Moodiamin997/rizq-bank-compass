@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { BankOffer, Customer } from "@/types";
-import { formatCurrency } from "@/utils/mockData";
+import { formatCurrency, simulateImprovedBankOffers } from "@/utils/mockData";
 import { useToast } from "@/hooks/use-toast";
 import TimerDisplay from "@/components/TimerDisplay";
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +23,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
   const [creditLimit, setCreditLimit] = useState("");
   const [localBankOffers, setLocalBankOffers] = useState<BankOffer[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [isSimulatingResponses, setIsSimulatingResponses] = useState(false);
   
   // Reset state when modal opens with new data
   React.useEffect(() => {
@@ -83,7 +84,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     }
   };
   
-  const handleSubmitOffer = () => {
+  const handleSubmitOffer = async () => {
     // Parse the credit limit by removing commas
     const numberValue = creditLimit.replace(/,/g, "");
     const creditLimitValue = Number(numberValue);
@@ -101,59 +102,94 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     const userOffer: BankOffer = {
       bankName: "Your Offer (Riyad Bank)",
       creditLimit: creditLimitValue,
-      isWinner: false, // Will be updated below
-      isTied: false,   // Will be updated below
-      timestamp: Date.now() // Add current timestamp
+      isWinner: false,
+      isTied: false,
+      timestamp: Date.now()
     };
     
     // Add the user's offer to the list, removing any previous "Your Offer" entries
-    const updatedOffers = localBankOffers.filter(offer => 
+    let updatedOffers = localBankOffers.filter(offer => 
       offer.bankName !== "Your Offer (Riyad Bank)"
     );
     updatedOffers.push(userOffer);
     
-    // Determine the highest credit limit
-    const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
+    // Check if this creates a tie or if user is winning
+    const highestCompetitorOffer = Math.max(...updatedOffers.filter(o => !o.bankName.includes("Your")).map(o => o.creditLimit));
+    const isTiedOrWinning = creditLimitValue >= highestCompetitorOffer;
     
-    // Check for ties (multiple offers with the same highest credit limit)
-    const highestOffers = updatedOffers.filter(offer => offer.creditLimit === highestOffer);
-    const hasTie = highestOffers.length > 1;
+    // If tied or winning, simulate bank responses
+    if (isTiedOrWinning) {
+      setIsSimulatingResponses(true);
+      
+      // Show initial offer submission
+      setLocalBankOffers(updatedOffers);
+      setSubmitted(true);
+      
+      // Wait a moment to show the initial state
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simulate improved bank offers
+      const improvedOffers = simulateImprovedBankOffers(updatedOffers, userOffer);
+      updatedOffers = improvedOffers;
+      setLocalBankOffers(improvedOffers);
+      
+      setIsSimulatingResponses(false);
+      
+      if (improvedOffers.some(o => o.timestamp && o.timestamp > userOffer.timestamp!)) {
+        toast({
+          title: "Banks responded!",
+          description: "Some banks have improved their offers in response to your submission.",
+          variant: "default"
+        });
+      }
+    } else {
+      setLocalBankOffers(updatedOffers);
+      setSubmitted(true);
+    }
+    
+    // Determine the final highest credit limit
+    const finalHighestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
+    
+    // Check for ties again after potential improvements
+    const finalHighestOffers = updatedOffers.filter(offer => offer.creditLimit === finalHighestOffer);
+    const hasFinalTie = finalHighestOffers.length > 1;
     
     // Update isWinner and isTied flags for all offers
     const finalOffers = updatedOffers.map(offer => ({
       ...offer,
-      isWinner: offer.creditLimit === highestOffer,
-      isTied: hasTie && offer.creditLimit === highestOffer
+      isWinner: offer.creditLimit === finalHighestOffer,
+      isTied: hasFinalTie && offer.creditLimit === finalHighestOffer
     }));
     
     setLocalBankOffers(finalOffers);
-    setSubmitted(true);
     
-    // Determine if our offer won (has highest credit limit, might be tied)
-    const offerWon = highestOffer === creditLimitValue;
+    // Determine final status - only "won" if user has the clear highest offer
+    const userHasHighestOffer = finalHighestOffer === creditLimitValue;
+    const finalStatus = userHasHighestOffer && !hasFinalTie ? "won" : "pending";
     
     // If this is updating an existing offer, update it; otherwise add new offer
     if (existingOffer && customer) {
-      updateOfferStatus(existingOffer.id, offerWon ? "won" : "pending", undefined, creditLimitValue);
+      updateOfferStatus(existingOffer.id, finalStatus, undefined, creditLimitValue);
     } else if (customer) {
-      // Add to global credit offer history - now including cobrandPartner from customer
+      // Add to global credit offer history
       addOffer({
         id: uuidv4(),
         customerName: customer.name,
         customerLocation: customer.location,
         timestamp: customer.applicationTime || Date.now(),
         creditLimit: creditLimitValue,
-        status: offerWon ? "won" : "pending",
-        competingBank: offerWon ? undefined : updatedOffers.find(o => o.creditLimit === highestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName,
+        status: finalStatus,
+        competingBank: finalStatus === "pending" ? updatedOffers.find(o => o.creditLimit === finalHighestOffer && o.bankName !== "Your Offer (Riyad Bank)")?.bankName : undefined,
         cardProduct: customer.appliedCard,
-        cobrandPartner: customer.cobrandPartner // Ensure cobrand partner is passed to the offer
+        cobrandPartner: customer.cobrandPartner
       });
     }
     
     const actionText = existingOffer ? "updated" : "submitted";
+    const statusText = finalStatus === "won" ? "won" : "is pending due to competitive offers";
     toast({
       title: `Credit offer ${actionText}`,
-      description: `Successfully ${actionText} offer of ${formatCurrency(creditLimitValue)} to ${customer?.name}`,
+      description: `Successfully ${actionText} offer of ${formatCurrency(creditLimitValue)} to ${customer?.name}. Offer ${statusText}.`,
     });
   };
   
@@ -214,12 +250,17 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
           </div>
           
           <div className="mt-4">
-            <h3 className="text-lg font-medium mb-2">Bank Offers</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-medium">Bank Offers</h3>
+              {isSimulatingResponses && (
+                <span className="text-xs text-blue-400 animate-pulse">Banks responding...</span>
+              )}
+            </div>
             <div className="space-y-2">
               {localBankOffers.map((offer) => (
                 <div 
-                  key={offer.bankName} 
-                  className={`p-3 rounded-md flex justify-between items-center ${
+                  key={`${offer.bankName}-${offer.timestamp}`} 
+                  className={`p-3 rounded-md flex justify-between items-center transition-all duration-300 ${
                     offer.isWinner && (offer.bankName === "Your Offer (Riyad Bank)" || offer.bankName === "Your Previous Offer (Riyad Bank)")
                       ? "bg-green-900/30 border border-green-700" 
                       : offer.isWinner
@@ -231,6 +272,9 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
                 >
                   <div>
                     <p>{offer.bankName}</p>
+                    {offer.timestamp && offer.timestamp > Date.now() - 10000 && !offer.bankName.includes("Your") && (
+                      <span className="text-xs text-orange-400">Just improved!</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <p>{formatCurrency(offer.creditLimit)}</p>
@@ -270,9 +314,10 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
           <Button variant="outline" onClick={handleClose}>Cancel</Button>
           <Button 
             onClick={handleSubmitOffer} 
+            disabled={isSimulatingResponses}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
-            {existingOffer ? "Update Offer" : "Submit Offer"}
+            {isSimulatingResponses ? "Processing..." : existingOffer ? "Update Offer" : "Submit Offer"}
           </Button>
         </DialogFooter>
       </DialogContent>
