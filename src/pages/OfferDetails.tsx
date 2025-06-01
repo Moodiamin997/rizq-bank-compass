@@ -18,6 +18,7 @@ const OfferDetails = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [bankOffers, setBankOffers] = useState<BankOffer[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [existingOffer, setExistingOffer] = useState<any>(null);
 
   useEffect(() => {
     if (!offerId) {
@@ -40,6 +41,9 @@ const OfferDetails = () => {
       navigate("/offers");
       return;
     }
+
+    // Store the existing offer for the modal
+    setExistingOffer(offer);
 
     // Reconstruct customer data from the offer
     const reconstructedCustomer: Customer = {
@@ -115,6 +119,7 @@ const OfferDetails = () => {
           onClose={handleModalClose}
           customer={customer}
           bankOffers={bankOffers}
+          existingOffer={existingOffer}
         />
       </div>
     </Layout>

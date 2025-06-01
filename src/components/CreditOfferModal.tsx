@@ -15,11 +15,12 @@ interface CreditOfferModalProps {
   onClose: () => void;
   customer: Customer | null;
   bankOffers: BankOffer[];
+  existingOffer?: any;
 }
 
-const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOfferModalProps) => {
+const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer }: CreditOfferModalProps) => {
   const { toast } = useToast();
-  const { addOffer } = useCreditOffers();
+  const { addOffer, updateOfferStatus } = useCreditOffers();
   const [creditLimit, setCreditLimit] = useState("");
   const [localBankOffers, setLocalBankOffers] = useState<BankOffer[]>([]);
   const [submitted, setSubmitted] = useState(false);
@@ -29,8 +30,24 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     if (isOpen && bankOffers) {
       // Filter out any existing "Your Offer" entries when initializing
       const filteredOffers = bankOffers.filter(offer => 
-        offer.bankName !== "Your Offer (Riyad Bank)"
+        offer.bankName !== "Your Offer (Riyad Bank)" && 
+        offer.bankName !== "Your Previous Offer (Riyad Bank)"
       );
+      
+      // If there's an existing offer, add it to the list and pre-fill the input
+      if (existingOffer) {
+        const previousOffer: BankOffer = {
+          bankName: "Your Previous Offer (Riyad Bank)",
+          creditLimit: existingOffer.creditLimit,
+          isWinner: false,
+          isTied: false,
+          timestamp: existingOffer.timestamp
+        };
+        filteredOffers.push(previousOffer);
+        
+        // Pre-fill the credit limit input with the existing offer amount
+        setCreditLimit(existingOffer.creditLimit.toLocaleString());
+      }
       
       // Find the highest offer and check for ties
       const highestLimit = Math.max(...filteredOffers.map(o => o.creditLimit));
@@ -46,9 +63,13 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       
       setLocalBankOffers([...updatedOffers]);
       setSubmitted(false);
-      setCreditLimit("");
+      
+      // Only clear credit limit if there's no existing offer
+      if (!existingOffer) {
+        setCreditLimit("");
+      }
     }
-  }, [isOpen, bankOffers]);
+  }, [isOpen, bankOffers, existingOffer]);
   
   // Format the input with commas as the user types
   const handleCreditLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,21 +107,11 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       timestamp: Date.now() // Add current timestamp
     };
     
-    // Add the user's offer to the list
-    const updatedOffers = [...localBankOffers];
-    
-    // Check if the user offer is already in the list and update it
-    const existingUserOfferIndex = updatedOffers.findIndex(offer => 
-      offer.bankName === "Your Offer (Riyad Bank)"
+    // Add the user's offer to the list, removing any previous "Your Offer" entries
+    const updatedOffers = localBankOffers.filter(offer => 
+      offer.bankName !== "Your Offer (Riyad Bank)"
     );
-    
-    if (existingUserOfferIndex >= 0) {
-      // Update existing offer
-      updatedOffers[existingUserOfferIndex] = userOffer;
-    } else {
-      // Add new offer
-      updatedOffers.push(userOffer);
-    }
+    updatedOffers.push(userOffer);
     
     // Determine the highest credit limit
     const highestOffer = Math.max(...updatedOffers.map(o => o.creditLimit));
@@ -122,8 +133,13 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     // Determine if our offer won (has highest credit limit, might be tied)
     const offerWon = highestOffer === creditLimitValue;
     
-    // Add to global credit offer history - now including cobrandPartner from customer
-    if (customer) {
+    // If this is updating an existing offer, update it; otherwise add new offer
+    if (existingOffer && customer) {
+      updateOfferStatus(existingOffer.id, offerWon ? "won" : "pending");
+      // Also update the credit limit in the existing offer
+      // Note: This would require extending the context to support credit limit updates
+    } else if (customer) {
+      // Add to global credit offer history - now including cobrandPartner from customer
       addOffer({
         id: uuidv4(),
         customerName: customer.name,
@@ -137,9 +153,10 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
       });
     }
     
+    const actionText = existingOffer ? "updated" : "submitted";
     toast({
-      title: "Credit offer submitted",
-      description: `Successfully offered ${formatCurrency(creditLimitValue)} to ${customer?.name}`,
+      title: `Credit offer ${actionText}`,
+      description: `Successfully ${actionText} offer of ${formatCurrency(creditLimitValue)} to ${customer?.name}`,
     });
   };
   
@@ -157,9 +174,14 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[500px] bg-background border border-white/10" aria-describedby="credit-offer-description">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Offer Credit to {customer.name}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            {existingOffer ? `Update Credit Offer to ${customer.name}` : `Offer Credit to ${customer.name}`}
+          </DialogTitle>
           <DialogDescription id="credit-offer-description">
-            Review the details and make a credit offer to this customer.
+            {existingOffer 
+              ? "Review and update your credit offer to this customer."
+              : "Review the details and make a credit offer to this customer."
+            }
           </DialogDescription>
         </DialogHeader>
         
@@ -201,11 +223,11 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                 <div 
                   key={offer.bankName} 
                   className={`p-3 rounded-md flex justify-between items-center ${
-                    offer.isWinner && offer.bankName === "Your Offer (Riyad Bank)"
+                    offer.isWinner && (offer.bankName === "Your Offer (Riyad Bank)" || offer.bankName === "Your Previous Offer (Riyad Bank)")
                       ? "bg-green-900/30 border border-green-700" 
                       : offer.isWinner
                         ? "bg-green-900/30 border border-green-700"
-                        : offer.bankName === "Your Offer (Riyad Bank)"
+                        : (offer.bankName === "Your Offer (Riyad Bank)" || offer.bankName === "Your Previous Offer (Riyad Bank)")
                           ? "bg-blue-900/30 border border-blue-700"
                           : "bg-secondary"
                   }`}
@@ -219,8 +241,10 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
                       <span className="text-xs font-semibold text-green-400 uppercase">
                         {offer.isTied ? "Tied Offer" : "Best Offer"}
                       </span>
-                    ) : offer.bankName === "Your Offer (Riyad Bank)" && (
-                      <span className="text-xs font-semibold text-blue-400 uppercase">Your Offer</span>
+                    ) : (offer.bankName === "Your Offer (Riyad Bank)" || offer.bankName === "Your Previous Offer (Riyad Bank)") && (
+                      <span className="text-xs font-semibold text-blue-400 uppercase">
+                        {offer.bankName === "Your Previous Offer (Riyad Bank)" ? "Previous" : "Your Offer"}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -230,7 +254,10 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
           
           <div className="mt-4">
             <label htmlFor="creditLimit" className="block text-sm font-medium mb-1">
-              Your Credit Limit Offer
+              {existingOffer 
+                ? `Your Credit Limit Offer (Previous: ${formatCurrency(existingOffer.creditLimit)})`
+                : "Your Credit Limit Offer"
+              }
             </label>
             <Input
               id="creditLimit"
@@ -248,7 +275,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers }: CreditOffer
             onClick={handleSubmitOffer} 
             className="bg-green-600 hover:bg-green-700 text-white"
           >
-            Submit Offer
+            {existingOffer ? "Update Offer" : "Submit Offer"}
           </Button>
         </DialogFooter>
       </DialogContent>
