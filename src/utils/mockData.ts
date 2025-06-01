@@ -1,4 +1,3 @@
-
 import { Customer, SettingsState } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 
@@ -87,7 +86,7 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
   // Generate offers with some variation
   const snbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.1)) / 1000) * 1000;
   const anbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.15)) / 1000) * 1000;
-  const alAhliOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.12)) / 1000) * 1000;
+  const rajhiOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.12)) / 1000) * 1000;
   
   // Get current timestamp
   const now = Date.now();
@@ -95,7 +94,7 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
   const offers = [
     { bankName: "SNB", creditLimit: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) }, // Random time within last hour
     { bankName: "ANB", creditLimit: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) }, // Random time within last 2 hours
-    { bankName: "Al Ahli Bank", creditLimit: alAhliOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) } // Random time within last 3 hours
+    { bankName: "Rajhi Bank", creditLimit: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) } // Random time within last 3 hours
   ];
   
   // Determine the winning offer based on settings

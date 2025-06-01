@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from "react";
 import { CreditOfferHistory } from "@/types";
 
@@ -83,7 +82,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       timestamp: Date.now() - 129600000, // 1.5 days ago
       creditLimit: 22000,
       status: "lost",
-      competingBank: "Al Ahli Bank",
+      competingBank: "Rajhi Bank",
       cardProduct: "Mastercard World Elite",
       apr: CARD_APR_RATES["Mastercard World Elite"],
       cobrandPartner: "panda"
