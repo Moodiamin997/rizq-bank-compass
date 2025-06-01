@@ -1,12 +1,11 @@
-
 import React, { createContext, useContext, useState } from "react";
-import { CreditOfferHistory } from "@/types";
+import { CreditOfferHistory, BankOffer } from "@/types";
 
 interface CreditOfferContextType {
   offerHistory: CreditOfferHistory[];
   addOffer: (offer: CreditOfferHistory) => void;
   withdrawOffer: (offerId: string) => void;
-  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number) => void;
+  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number, competingOffers?: BankOffer[]) => void;
 }
 
 const CreditOfferContext = createContext<CreditOfferContextType>({
@@ -97,6 +96,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     }
     
     console.log("Adding new offer with cobrandPartner:", offer.cobrandPartner);
+    console.log("Adding new offer with competingOffers:", offer.competingOffers);
     
     setOfferHistory(prev => [offer, ...prev]);
   };
@@ -105,7 +105,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     setOfferHistory(prev => prev.filter(offer => offer.id !== offerId));
   };
 
-  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number) => {
+  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number, competingOffers?: BankOffer[]) => {
     setOfferHistory(prev => 
       prev.map(offer => 
         offer.id === offerId 
@@ -113,7 +113,8 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
               ...offer, 
               status, 
               ...(cancelReason ? { cancelReason } : {}),
-              ...(creditLimit !== undefined ? { creditLimit } : {})
+              ...(creditLimit !== undefined ? { creditLimit } : {}),
+              ...(competingOffers ? { competingOffers } : {})
             }
           : offer
       )

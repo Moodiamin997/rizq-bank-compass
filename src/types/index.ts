@@ -51,4 +51,5 @@ export interface CreditOfferHistory {
   apr?: number;
   cancelReason?: string;
   cobrandPartner?: string; // Cobrand partner field
+  competingOffers?: BankOffer[]; // Store the final state of all bank offers
 }

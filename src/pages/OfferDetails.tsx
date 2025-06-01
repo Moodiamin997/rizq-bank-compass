@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -62,16 +61,23 @@ const OfferDetails = () => {
 
     setCustomer(reconstructedCustomer);
 
-    // Generate competing bank offers
-    const defaultSettings: SettingsState = {
-      prioritizeLowestDTI: false,
-      minCreditScore: 600,
-      maxDebtBurdenRatio: 0.5,
-      defaultCreditLimit: 20000
-    };
+    // Use stored competing offers if available, otherwise generate fresh ones
+    if (offer.competingOffers && offer.competingOffers.length > 0) {
+      console.log("Using stored competing offers:", offer.competingOffers);
+      setBankOffers(offer.competingOffers);
+    } else {
+      console.log("Generating fresh bank offers");
+      // Generate competing bank offers
+      const defaultSettings: SettingsState = {
+        prioritizeLowestDTI: false,
+        minCreditScore: 600,
+        maxDebtBurdenRatio: 0.5,
+        defaultCreditLimit: 20000
+      };
 
-    const offers = generateBankOffers(reconstructedCustomer, defaultSettings);
-    setBankOffers(offers);
+      const offers = generateBankOffers(reconstructedCustomer, defaultSettings);
+      setBankOffers(offers);
+    }
     
     // Automatically open the modal to show offers
     setIsModalOpen(true);
