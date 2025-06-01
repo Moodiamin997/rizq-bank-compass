@@ -1,5 +1,5 @@
-
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ const CreditOffers = () => {
   const [issuingOffer, setIssuingOffer] = useState<string | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Function to format date from timestamp - updated to use 'en-US' locale for English month names
   const formatDate = (timestamp: number) => {
@@ -171,6 +172,17 @@ const CreditOffers = () => {
     setShowCancelDialog(true);
   };
 
+  // Handle view details for pending offers
+  const handleViewDetails = (offerId: string, status: string) => {
+    if (status === "pending") {
+      navigate(`/offers/${offerId}`);
+    } else {
+      // For non-pending offers, you could show a different details view
+      // For now, we'll just show a toast
+      toast.success("Detailed view for completed offers coming soon");
+    }
+  };
+
   return (
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       <div className="space-y-6">
@@ -261,7 +273,11 @@ const CreditOffers = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleViewDetails(offer.id, offer.status)}
+                              >
+                                View Details
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-destructive hover:text-destructive-foreground hover:bg-destructive font-medium"
@@ -279,7 +295,11 @@ const CreditOffers = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
-                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleViewDetails(offer.id, offer.status)}
+                              >
+                                View Details
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="flex items-center"
@@ -316,7 +336,11 @@ const CreditOffers = () => {
                         ) : offer.status === "issued" ? (
                           null  // Removed the View Details button for issued cards
                         ) : offer.status !== "lost" ? (
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleViewDetails(offer.id, offer.status)}
+                          >
                             View Details
                           </Button>
                         ) : null}
