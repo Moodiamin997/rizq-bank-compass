@@ -24,6 +24,7 @@ const Index = () => {
     incomeLevel: [5000, 30000],
     debtBurdenRatio: [0, 0.5],
     cobrandPartner: undefined, // Added cobrand partner filter
+    sortByApplicationTime: "none", // Added sort by application time
   });
   
   // State for settings
@@ -39,9 +40,9 @@ const Index = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [bankOffers, setBankOffers] = useState<BankOffer[]>([]);
   
-  // Filter customers based on current filters
+  // Filter and sort customers based on current filters
   const filteredCustomers = useMemo(() => {
-    return allCustomers.filter(customer => {
+    let result = allCustomers.filter(customer => {
       // Applied card filter
       if (filters.appliedCard !== "all_cards" && customer.appliedCard !== filters.appliedCard) {
         return false;
@@ -91,6 +92,25 @@ const Index = () => {
       
       return true;
     });
+
+    // Apply sorting based on application time
+    if (filters.sortByApplicationTime === "newest") {
+      result = result.sort((a, b) => {
+        if (!a.applicationTime && !b.applicationTime) return 0;
+        if (!a.applicationTime) return 1;
+        if (!b.applicationTime) return -1;
+        return b.applicationTime - a.applicationTime; // Newest first (descending)
+      });
+    } else if (filters.sortByApplicationTime === "oldest") {
+      result = result.sort((a, b) => {
+        if (!a.applicationTime && !b.applicationTime) return 0;
+        if (!a.applicationTime) return 1;
+        if (!b.applicationTime) return -1;
+        return a.applicationTime - b.applicationTime; // Oldest first (ascending)
+      });
+    }
+
+    return result;
   }, [allCustomers, filters, settings]);
   
   // Handle offering credit to a customer

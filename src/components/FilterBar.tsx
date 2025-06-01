@@ -87,6 +87,26 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
           </Select>
         </div>
 
+        {/* Sort by Application Time */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Sort by Application Time</label>
+          <Select
+            value={filters.sortByApplicationTime}
+            onValueChange={(value) =>
+              setFilters({ ...filters, sortByApplicationTime: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Sort Order" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No Sorting</SelectItem>
+              <SelectItem value="newest">Newest Applications First</SelectItem>
+              <SelectItem value="oldest">Oldest Applications First</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Location Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Location</label>

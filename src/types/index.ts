@@ -1,3 +1,4 @@
+
 export interface Customer {
   id: string;
   name: string;
@@ -28,6 +29,7 @@ export interface FilterState {
   incomeLevel: [number, number];
   debtBurdenRatio: [number, number];
   cobrandPartner?: string; // Cobrand partner filter
+  sortByApplicationTime: string; // Sort by application time
 }
 
 export interface SettingsState {
