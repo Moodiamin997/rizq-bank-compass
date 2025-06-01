@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -73,7 +74,7 @@ const CreditOffers = () => {
       case "issued":
         return (
           <Badge className="bg-blue-700 hover:bg-blue-800 flex items-center gap-1">
-            <X className="h-3 w-3" />
+            <CreditCard className="h-3 w-3" />
             Issued
           </Badge>
         );
