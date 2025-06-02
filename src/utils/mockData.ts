@@ -128,7 +128,7 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
   return offers;
 };
 
-export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer: BankOffer): BankOffer[] => {
+export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer: BankOffer, customer?: Customer): BankOffer[] => {
   const userCreditLimit = userOffer.creditLimit;
   const highestCurrentOffer = Math.max(...currentOffers.map(o => o.creditLimit));
   

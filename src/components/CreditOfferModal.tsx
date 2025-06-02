@@ -160,8 +160,8 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
       // Wait a moment to show the initial state
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simulate improved bank offers
-      const improvedOffers = simulateImprovedBankOffers(updatedOffers, userOffer);
+      // Simulate improved bank offers with customer data for validation
+      const improvedOffers = simulateImprovedBankOffers(updatedOffers, userOffer, customer);
       updatedOffers = improvedOffers;
       
       setIsSimulatingResponses(false);
