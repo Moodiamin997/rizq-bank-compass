@@ -1,5 +1,6 @@
 import { Customer, SettingsState, BankOffer } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
+import { CARD_TIERS, getAutoSuggestedLimit } from "./creditLimitValidation";
 
 export const CARD_TYPES = [
   { name: "Visa Platinum", logo: "VISA" },
@@ -76,25 +77,33 @@ export const generateMockCustomers = (count: number): Customer[] => {
 };
 
 export const generateBankOffers = (customer: Customer, settings: SettingsState) => {
-  // Base amount calculated from income, but use defaultCreditLimit as a starting point
-  const baseAmount = settings.defaultCreditLimit * (customer.income / 10000);
+  // Use tier-based calculation instead of arbitrary base amount
+  const suggestedLimit = getAutoSuggestedLimit(customer.income, customer.appliedCard);
   
   // Apply adjustments based on credit score and debt ratio
-  const creditScoreFactor = customer.creditScore / 800;
-  const debtFactor = 1 - customer.debtBurdenRatio;
+  const creditScoreFactor = Math.min(customer.creditScore / 750, 1.2); // Cap at 20% bonus
+  const debtFactor = Math.max(1 - customer.debtBurdenRatio, 0.6); // Min 60% of base
   
-  // Generate offers with some variation
-  const snbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.1)) / 1000) * 1000;
-  const anbOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.15)) / 1000) * 1000;
-  const rajhiOffer = Math.round((baseAmount * creditScoreFactor * debtFactor * (1 - Math.random() * 0.12)) / 1000) * 1000;
+  // Generate realistic offers with tier-appropriate variations
+  const tierConfig = CARD_TIERS[customer.appliedCard];
+  const [minMultiplier, maxMultiplier] = tierConfig?.multiplierRange || [2, 4];
+  
+  // Each bank offers within the tier range, with some variation
+  const snbMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.8);
+  const anbMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.9);
+  const rajhiMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.85);
+  
+  const snbOffer = Math.round((customer.income * snbMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
+  const anbOffer = Math.round((customer.income * anbMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
+  const rajhiOffer = Math.round((customer.income * rajhiMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
   
   // Get current timestamp
   const now = Date.now();
   
   const offers = [
-    { bankName: "SNB", creditLimit: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) }, // Random time within last hour
-    { bankName: "ANB", creditLimit: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) }, // Random time within last 2 hours
-    { bankName: "Rajhi Bank", creditLimit: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) } // Random time within last 3 hours
+    { bankName: "SNB", creditLimit: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) },
+    { bankName: "ANB", creditLimit: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) },
+    { bankName: "Rajhi Bank", creditLimit: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) }
   ];
   
   // Determine the winning offer based on settings

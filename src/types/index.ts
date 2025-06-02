@@ -50,13 +50,20 @@ export interface CreditOfferHistory {
   cardProduct?: string;
   apr?: number;
   cancelReason?: string;
-  cobrandPartner?: string; // Cobrand partner field
-  competingOffers?: BankOffer[]; // Store the final state of all bank offers
-  auditTrail?: string[]; // Store tie-breaking decision audit trail
+  cobrandPartner?: string;
+  competingOffers?: BankOffer[];
+  auditTrail?: string[];
   // Store original customer financial data
   customerIncome?: number;
   customerCreditScore?: number;
   customerDebtBurdenRatio?: number;
   customerAge?: number;
   customerNationality?: string;
+  // Add validation metadata for audit purposes
+  validationResult?: {
+    riskLevel: "conservative" | "standard" | "aggressive" | "outlier";
+    multiplier: number;
+    isValid: boolean;
+    message: string;
+  };
 }

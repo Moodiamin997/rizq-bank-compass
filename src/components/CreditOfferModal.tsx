@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { BankOffer, Customer } from "@/types";
 import { formatCurrency, simulateImprovedBankOffers } from "@/utils/mockData";
 import { resolveTieBreaking } from "@/utils/tieBreaking";
+import { validateCreditLimit, getAutoSuggestedLimit, getRiskLevelColor, CARD_TIERS } from "@/utils/creditLimitValidation";
 import { useToast } from "@/hooks/use-toast";
 import TimerDisplay from "@/components/TimerDisplay";
 import { v4 as uuidv4 } from 'uuid';
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
+import { Info, Lightbulb } from "lucide-react";
 
 interface CreditOfferModalProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
   const [submitted, setSubmitted] = useState(false);
   const [isSimulatingResponses, setIsSimulatingResponses] = useState(false);
   const [auditTrail, setAuditTrail] = useState<string[]>([]);
+  const [showAutoSuggest, setShowAutoSuggest] = useState(false);
   
   // Reset state when modal opens with new data
   React.useEffect(() => {
@@ -83,6 +86,27 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     }
   };
   
+  // Get validation result for current input
+  const getValidationResult = () => {
+    if (!customer || !creditLimit) return null;
+    
+    const numberValue = Number(creditLimit.replace(/,/g, ""));
+    if (!numberValue || isNaN(numberValue)) return null;
+    
+    return validateCreditLimit(numberValue, customer.income, customer.appliedCard);
+  };
+  
+  const validationResult = getValidationResult();
+  const tierConfig = customer ? CARD_TIERS[customer.appliedCard] : null;
+  const suggestedAmount = customer ? getAutoSuggestedLimit(customer.income, customer.appliedCard) : 0;
+  
+  const handleAutoSuggest = () => {
+    if (suggestedAmount) {
+      setCreditLimit(suggestedAmount.toLocaleString());
+      setShowAutoSuggest(false);
+    }
+  };
+  
   const handleSubmitOffer = async () => {
     // Parse the credit limit by removing commas
     const numberValue = creditLimit.replace(/,/g, "");
@@ -95,6 +119,15 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
         variant: "destructive"
       });
       return;
+    }
+    
+    // Check validation before proceeding
+    if (validationResult && !validationResult.isValid) {
+      toast({
+        title: "Credit limit validation warning",
+        description: validationResult.message,
+        variant: "destructive"
+      });
     }
     
     // Create user offer
@@ -229,17 +262,22 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Card Applied</p>
               <p className="text-base">{customer.appliedCard}</p>
+              {tierConfig && (
+                <p className="text-xs text-muted-foreground">
+                  {tierConfig.multiplierRange[0]}×–{tierConfig.multiplierRange[1]}× salary range
+                </p>
+              )}
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Location</p>
-              <p className="text-base">{customer.location}</p>
+              <p className="text-sm text-muted-foreground">Monthly Income</p>
+              <p className="text-base">{formatCurrency(customer.income)}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Income</p>
-              <p className="text-base">{formatCurrency(customer.income)}</p>
+              <p className="text-sm text-muted-foreground">Credit Score</p>
+              <p className="text-base">{customer.creditScore}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Debt Burden Ratio</p>
@@ -301,20 +339,61 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             )}
           </div>
           
-          <div className="mt-4">
-            <label htmlFor="creditLimit" className="block text-sm font-medium mb-1">
-              {existingOffer 
-                ? `Your Credit Limit Offer (Previous: ${formatCurrency(existingOffer.creditLimit)})`
-                : "Your Credit Limit Offer"
-              }
-            </label>
-            <Input
-              id="creditLimit"
-              placeholder="15,000"
-              value={creditLimit}
-              onChange={handleCreditLimitChange}
-              className="bg-secondary border-white/10"
-            />
+          <div className="mt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <label htmlFor="creditLimit" className="block text-sm font-medium">
+                {existingOffer 
+                  ? `Your Credit Limit Offer (Previous: ${formatCurrency(existingOffer.creditLimit)})`
+                  : "Your Credit Limit Offer"
+                }
+              </label>
+              {showAutoSuggest && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAutoSuggest}
+                  className="flex items-center gap-1 text-xs h-7"
+                >
+                  <Lightbulb className="h-3 w-3" />
+                  Suggest {formatCurrency(suggestedAmount)}
+                </Button>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Input
+                id="creditLimit"
+                placeholder="15,000"
+                value={creditLimit}
+                onChange={handleCreditLimitChange}
+                className={`bg-secondary border-white/10 ${
+                  validationResult ? getRiskLevelColor(validationResult.riskLevel) : ""
+                }`}
+              />
+              
+              {validationResult && (
+                <div className={`flex items-start gap-2 p-2 rounded-md text-xs ${getRiskLevelColor(validationResult.riskLevel)}`}>
+                  <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">
+                      {validationResult.riskLevel.charAt(0).toUpperCase() + validationResult.riskLevel.slice(1)} Risk 
+                      ({validationResult.multiplier.toFixed(1)}× salary)
+                    </p>
+                    <p>{validationResult.message}</p>
+                  </div>
+                </div>
+              )}
+              
+              {tierConfig && (
+                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Info className="h-3 w-3" />
+                  <span>
+                    {tierConfig.name} typical range: {formatCurrency(customer.income * tierConfig.multiplierRange[0])} - {formatCurrency(customer.income * tierConfig.multiplierRange[1])}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
