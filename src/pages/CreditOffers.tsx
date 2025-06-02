@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { Table, TableHeader, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Clock, CreditCard, ChevronRight, Lock, Download, ArrowRight, Shield } from "lucide-react";
+import { Check, X, Clock, CreditCard, ChevronRight, Lock, Download, ArrowRight } from "lucide-react";
 import { formatCurrency } from "@/utils/mockData";
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
 import TimerDisplay from "@/components/TimerDisplay";
@@ -118,12 +118,6 @@ const CreditOffers = () => {
   const handleWithdrawOffer = (offerId: string, customerName: string) => {
     withdrawOffer(offerId);
     toast.success(`Offer to ${customerName} has been withdrawn`);
-  };
-
-  // Handle confirm & lock
-  const handleConfirmAndLock = (offerId: string, customerName: string) => {
-    updateOfferStatus(offerId, "won");
-    toast.success(`Offer to ${customerName} has been locked`);
   };
 
   // Handle trigger issuance
@@ -301,13 +295,6 @@ const CreditOffers = () => {
                                 View Details
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="flex items-center"
-                                onClick={() => handleConfirmAndLock(offer.id, offer.customerName)}
-                              >
-                                <Shield className="mr-2 h-4 w-4" />
-                                Confirm & Lock
-                              </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="flex items-center"
                                 onClick={() => handleTriggerIssuance(offer.id, offer.customerName)}
