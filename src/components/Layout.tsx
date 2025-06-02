@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, Settings, X, CreditCard } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Link } from "react-router-dom";
 
 interface LayoutProps {
@@ -92,7 +91,6 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
                  currentTab === "offers" ? "Credit Offers" : "Settings"}
               </h1>
             </div>
-            <ThemeToggle />
           </div>
         </header>
         <main className="flex-1 overflow-auto p-6">
