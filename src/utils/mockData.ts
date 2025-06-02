@@ -1,6 +1,6 @@
 import { Customer, SettingsState, BankOffer } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
-import { CARD_TIERS, getAutoSuggestedLimit } from "./creditLimitValidation";
+import { CARD_TIERS, getAutoSuggestedLimit, validateCreditLimit } from "./creditLimitValidation";
 
 export const CARD_TYPES = [
   { name: "Visa Platinum", logo: "VISA" },
@@ -137,29 +137,68 @@ export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer
     return currentOffers;
   }
   
+  // Determine probability based on risk level of user's offer
+  let improvementProbability = 0.7; // Default 70% chance
+  
+  if (customer) {
+    const validationResult = validateCreditLimit(userCreditLimit, customer.income, customer.appliedCard);
+    
+    // If user's offer is classified as "outlier" risk, banks are much less likely to respond
+    if (validationResult.riskLevel === "outlier") {
+      improvementProbability = 0.05; // Only 5% chance for outlier offers
+    }
+  }
+  
   const improvedOffers = currentOffers.map(offer => {
     // Skip user's own offers
     if (offer.bankName.includes("Your") || offer.bankName.includes("Riyad Bank")) {
       return offer;
     }
     
-    // 70% chance a bank will improve their offer when faced with competition
-    const willImprove = Math.random() < 0.7;
+    // Use risk-adjusted probability for banks to improve their offers
+    const willImprove = Math.random() < improvementProbability;
     
     if (willImprove && offer.creditLimit <= userCreditLimit) {
-      // Improve by 5-15% above the user's offer
-      const improvementFactor = 1.05 + (Math.random() * 0.10); // 5-15% improvement
-      const newLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000; // Round to nearest 1000
+      // Get the card tier configuration to respect maximum limits
+      const tierConfig = customer ? CARD_TIERS[customer.appliedCard] : null;
       
-      // Cap at reasonable limits (don't exceed 200% of original offer)
-      const maxLimit = offer.creditLimit * 2;
-      const improvedLimit = Math.min(newLimit, maxLimit);
-      
-      return {
-        ...offer,
-        creditLimit: improvedLimit,
-        timestamp: Date.now() // Update timestamp to show this is a new offer
-      };
+      if (tierConfig && customer) {
+        // Calculate the maximum allowed credit limit for this card tier
+        const maxAllowedLimit = customer.income * tierConfig.multiplierRange[1];
+        
+        // If the current offer is already at or near the maximum, don't increase
+        if (offer.creditLimit >= maxAllowedLimit * 0.95) {
+          return offer; // Bank declines to increase due to guideline constraints
+        }
+        
+        // Improve by 5-15% above the user's offer, but cap at tier maximum
+        const improvementFactor = 1.05 + (Math.random() * 0.10); // 5-15% improvement
+        const proposedLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000;
+        
+        // Ensure the improved offer doesn't exceed card tier guidelines
+        const improvedLimit = Math.min(proposedLimit, maxAllowedLimit, offer.creditLimit * 2);
+        
+        // Only improve if the new limit is actually higher and within guidelines
+        if (improvedLimit > offer.creditLimit) {
+          return {
+            ...offer,
+            creditLimit: improvedLimit,
+            timestamp: Date.now() // Update timestamp to show this is a new offer
+          };
+        }
+      } else {
+        // Fallback logic when no customer data or tier config is available
+        const improvementFactor = 1.05 + (Math.random() * 0.10);
+        const newLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000;
+        const maxLimit = offer.creditLimit * 2;
+        const improvedLimit = Math.min(newLimit, maxLimit);
+        
+        return {
+          ...offer,
+          creditLimit: improvedLimit,
+          timestamp: Date.now()
+        };
+      }
     }
     
     return offer;
