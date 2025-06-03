@@ -50,12 +50,10 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
             <SelectTrigger>
               <SelectValue placeholder="Select Card Type" />
             </SelectTrigger>
-            <SelectContent className="bg-background border border-white/10">
-              <SelectItem value="all_cards" className="text-foreground hover:bg-white/5">
-                All Cards
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="all_cards">All Cards</SelectItem>
               {CARD_TYPES.map((card) => (
-                <SelectItem key={card.name} value={card.name} className="text-foreground hover:bg-white/5">
+                <SelectItem key={card.name} value={card.name}>
                   {card.name}
                 </SelectItem>
               ))}
@@ -78,12 +76,10 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
             <SelectTrigger>
               <SelectValue placeholder="Select Partner" />
             </SelectTrigger>
-            <SelectContent className="bg-background border border-white/10">
-              <SelectItem value="all_partners" className="text-foreground hover:bg-white/5">
-                All Partners
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="all_partners">All Partners</SelectItem>
               {COBRAND_PARTNERS.filter(p => p.id !== "none").map((partner) => (
-                <SelectItem key={partner.id} value={partner.id} className="text-foreground hover:bg-white/5">
+                <SelectItem key={partner.id} value={partner.id}>
                   {partner.name}
                 </SelectItem>
               ))}
@@ -103,16 +99,10 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
             <SelectTrigger>
               <SelectValue placeholder="Select Sort Order" />
             </SelectTrigger>
-            <SelectContent className="bg-background border border-white/10">
-              <SelectItem value="none" className="text-foreground hover:bg-white/5">
-                No Sorting
-              </SelectItem>
-              <SelectItem value="newest" className="text-foreground hover:bg-white/5">
-                Newest Applications First
-              </SelectItem>
-              <SelectItem value="oldest" className="text-foreground hover:bg-white/5">
-                Oldest Applications First
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="none">No Sorting</SelectItem>
+              <SelectItem value="newest">Newest Applications First</SelectItem>
+              <SelectItem value="oldest">Oldest Applications First</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -129,12 +119,10 @@ const FilterBar = ({ initialFilters, onApplyFilters }: FilterBarProps) => {
             <SelectTrigger>
               <SelectValue placeholder="Select Location" />
             </SelectTrigger>
-            <SelectContent className="bg-background border border-white/10">
-              <SelectItem value="all_locations" className="text-foreground hover:bg-white/5">
-                All Locations
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="all_locations">All Locations</SelectItem>
               {LOCATIONS.map((location) => (
-                <SelectItem key={location} value={location} className="text-foreground hover:bg-white/5">
+                <SelectItem key={location} value={location}>
                   {location}
                 </SelectItem>
               ))}
