@@ -68,18 +68,18 @@ export function resolveTieBreaking(
 ): TieBreakingResult {
   const auditTrail: string[] = [];
   
-  // Step 1: Find highest credit limit
-  const highestLimit = Math.max(...offers.map(o => o.creditLimit));
-  const tiedOffers = offers.filter(offer => offer.creditLimit === highestLimit);
+  // Step 1: Find highest welcome balance
+  const highestLimit = Math.max(...offers.map(o => o.welcomeBalance));
+  const tiedOffers = offers.filter(offer => offer.welcomeBalance === highestLimit);
   
-  auditTrail.push(`Highest credit limit: ${highestLimit.toLocaleString()}`);
-  auditTrail.push(`Banks tied at highest limit: ${tiedOffers.map(o => o.bankName).join(", ")}`);
+  auditTrail.push(`Highest welcome balance: ${highestLimit.toLocaleString()}`);
+  auditTrail.push(`Banks tied at highest balance: ${tiedOffers.map(o => o.bankName).join(", ")}`);
   
-  // If only one offer at highest limit, it wins
+  // If only one offer at highest balance, it wins
   if (tiedOffers.length === 1) {
     const updatedOffers = offers.map(offer => ({
       ...offer,
-      isWinner: offer.creditLimit === highestLimit,
+      isWinner: offer.welcomeBalance === highestLimit,
       isTied: false
     }));
     

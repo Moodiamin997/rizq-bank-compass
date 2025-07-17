@@ -6,7 +6,7 @@ interface CreditOfferContextType {
   offerHistory: CreditOfferHistory[];
   addOffer: (offer: CreditOfferHistory) => void;
   withdrawOffer: (offerId: string) => void;
-  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number, competingOffers?: BankOffer[]) => void;
+  updateOfferStatus: (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, welcomeBalance?: number, competingOffers?: BankOffer[]) => void;
 }
 
 const CreditOfferContext = createContext<CreditOfferContextType>({
@@ -36,7 +36,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       customerName: "Mohammed Al-Qahtani",
       customerLocation: "Riyadh",
       timestamp: Date.now() - 3600000 * 2, // 2 hours ago
-      creditLimit: 25000,
+      welcomeBalance: 25000,
       status: "won",
       cardProduct: "Visa Signature",
       apr: CARD_APR_RATES["Visa Signature"],
@@ -52,7 +52,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       customerName: "Sara Al-Shehri",
       customerLocation: "Jeddah",
       timestamp: Date.now() - 3600000 * 6, // 6 hours ago
-      creditLimit: 18000,
+      welcomeBalance: 18000,
       status: "lost",
       competingBank: "SNB",
       cardProduct: "Mastercard World",
@@ -69,7 +69,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       customerName: "Abdullah Al-Otaibi",
       customerLocation: "Dammam",
       timestamp: Date.now() - 1800000, // 30 minutes ago
-      creditLimit: 30000,
+      welcomeBalance: 30000,
       status: "pending",
       cardProduct: "Visa Infinite",
       apr: CARD_APR_RATES["Visa Infinite"],
@@ -85,7 +85,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       customerName: "Fatima Al-Harbi",
       customerLocation: "Mecca",
       timestamp: Date.now() - 86400000, // 1 day ago
-      creditLimit: 15000,
+      welcomeBalance: 15000,
       status: "won",
       cardProduct: "Visa Platinum",
       apr: CARD_APR_RATES["Visa Platinum"],
@@ -101,7 +101,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
       customerName: "Khalid Al-Zahrani",
       customerLocation: "Medina",
       timestamp: Date.now() - 129600000, // 1.5 days ago
-      creditLimit: 22000,
+      welcomeBalance: 22000,
       status: "lost",
       competingBank: "Rajhi Bank",
       cardProduct: "Mastercard World Elite",
@@ -136,7 +136,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
     setOfferHistory(prev => prev.filter(offer => offer.id !== offerId));
   };
 
-  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, creditLimit?: number, competingOffers?: BankOffer[]) => {
+  const updateOfferStatus = (offerId: string, status: CreditOfferHistory["status"], cancelReason?: string, welcomeBalance?: number, competingOffers?: BankOffer[]) => {
     setOfferHistory(prev => 
       prev.map(offer => 
         offer.id === offerId 
@@ -144,7 +144,7 @@ export const CreditOfferProvider = ({ children }: { children: React.ReactNode })
               ...offer, 
               status, 
               ...(cancelReason ? { cancelReason } : {}),
-              ...(creditLimit !== undefined ? { creditLimit } : {}),
+              ...(welcomeBalance !== undefined ? { welcomeBalance } : {}),
               ...(competingOffers ? { competingOffers } : {})
             }
           : offer

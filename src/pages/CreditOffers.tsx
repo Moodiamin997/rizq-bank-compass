@@ -180,10 +180,10 @@ const CreditOffers = () => {
   return (
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Credit Offer History</h1>
+        <h1 className="text-2xl font-bold">Welcome Balance History</h1>
         <div className="bg-secondary/40 p-4 rounded-md">
           <p className="text-sm text-muted-foreground">
-            This page shows all the credit offers you've made to customers and their current status in the past 24 hours.
+            This page shows all the welcome balance offers you've made to customers and their current status in the past 24 hours. Welcome balances are deposited directly into customer accounts upon activation.
           </p>
         </div>
         
@@ -197,7 +197,7 @@ const CreditOffers = () => {
                 <TableHead className="w-[80px] font-semibold text-center">APR</TableHead>
                 <TableHead className="w-[150px] font-semibold">Cobrand Partner</TableHead>
                 <TableHead className="w-[150px] font-semibold">Date</TableHead>
-                <TableHead className="w-[120px] font-semibold">Credit Limit</TableHead>
+                <TableHead className="w-[120px] font-semibold">Welcome Balance</TableHead>
                 <TableHead className="w-[120px] font-semibold">Status</TableHead>
                 <TableHead className="text-right w-[120px] font-semibold">Actions</TableHead>
               </TableRow>
@@ -206,7 +206,7 @@ const CreditOffers = () => {
               {offerHistory.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                    No credit offers made yet
+                    No welcome balance offers made yet
                   </TableCell>
                 </TableRow>
               ) : (
@@ -235,7 +235,7 @@ const CreditOffers = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{formatCurrency(offer.creditLimit)}</TableCell>
+                    <TableCell className="font-medium">{formatCurrency(offer.welcomeBalance)}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
                         {renderStatusBadge(offer.status)}

@@ -101,9 +101,9 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
   const now = Date.now();
   
   const offers = [
-    { bankName: "SNB", creditLimit: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) },
-    { bankName: "ANB", creditLimit: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) },
-    { bankName: "Rajhi Bank", creditLimit: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) }
+    { bankName: "SNB", welcomeBalance: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) },
+    { bankName: "ANB", welcomeBalance: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) },
+    { bankName: "Rajhi Bank", welcomeBalance: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) }
   ];
   
   // Determine the winning offer based on settings
@@ -111,7 +111,7 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
     // If prioritizing lowest DTI, adjust which offer wins based on debt burden ratio
     const dtiAdjustedOffers = offers.map(offer => ({
       ...offer,
-      adjustedValue: offer.creditLimit * (1 - customer.debtBurdenRatio)
+      adjustedValue: offer.welcomeBalance * (1 - customer.debtBurdenRatio)
     }));
     
     const winner = dtiAdjustedOffers.reduce((prev, current) => 
@@ -121,19 +121,19 @@ export const generateBankOffers = (customer: Customer, settings: SettingsState) 
     offers.find(o => o.bankName === winner.bankName)!.isWinner = true;
   } else {
     // Otherwise, highest offer wins
-    const highestOffer = Math.max(...offers.map(o => o.creditLimit));
-    offers.find(o => o.creditLimit === highestOffer)!.isWinner = true;
+    const highestOffer = Math.max(...offers.map(o => o.welcomeBalance));
+    offers.find(o => o.welcomeBalance === highestOffer)!.isWinner = true;
   }
   
   return offers;
 };
 
 export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer: BankOffer, customer?: Customer): BankOffer[] => {
-  const userCreditLimit = userOffer.creditLimit;
-  const highestCurrentOffer = Math.max(...currentOffers.map(o => o.creditLimit));
+  const userWelcomeBalance = userOffer.welcomeBalance;
+  const highestCurrentOffer = Math.max(...currentOffers.map(o => o.welcomeBalance));
   
   // Only improve offers if user's offer ties with or beats the current highest
-  if (userCreditLimit < highestCurrentOffer) {
+  if (userWelcomeBalance < highestCurrentOffer) {
     return currentOffers;
   }
   
@@ -141,7 +141,7 @@ export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer
   let improvementProbability = 0.7; // Default 70% chance
   
   if (customer) {
-    const validationResult = validateCreditLimit(userCreditLimit, customer.income, customer.appliedCard);
+    const validationResult = validateCreditLimit(userWelcomeBalance, customer.income, customer.appliedCard);
     
     // If user's offer is classified as "outlier" risk, banks are much less likely to respond
     if (validationResult.riskLevel === "outlier") {
@@ -158,7 +158,7 @@ export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer
     // Use risk-adjusted probability for banks to improve their offers
     const willImprove = Math.random() < improvementProbability;
     
-    if (willImprove && offer.creditLimit <= userCreditLimit) {
+    if (willImprove && offer.welcomeBalance <= userWelcomeBalance) {
       // Get the card tier configuration to respect maximum limits
       const tierConfig = customer ? CARD_TIERS[customer.appliedCard] : null;
       
@@ -167,35 +167,35 @@ export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer
         const maxAllowedLimit = customer.income * tierConfig.multiplierRange[1];
         
         // If the current offer is already at or near the maximum, don't increase
-        if (offer.creditLimit >= maxAllowedLimit * 0.95) {
+        if (offer.welcomeBalance >= maxAllowedLimit * 0.95) {
           return offer; // Bank declines to increase due to guideline constraints
         }
         
         // Improve by 5-15% above the user's offer, but cap at tier maximum
         const improvementFactor = 1.05 + (Math.random() * 0.10); // 5-15% improvement
-        const proposedLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000;
+        const proposedLimit = Math.round((userWelcomeBalance * improvementFactor) / 1000) * 1000;
         
         // Ensure the improved offer doesn't exceed card tier guidelines
-        const improvedLimit = Math.min(proposedLimit, maxAllowedLimit, offer.creditLimit * 2);
+        const improvedLimit = Math.min(proposedLimit, maxAllowedLimit, offer.welcomeBalance * 2);
         
         // Only improve if the new limit is actually higher and within guidelines
-        if (improvedLimit > offer.creditLimit) {
+        if (improvedLimit > offer.welcomeBalance) {
           return {
             ...offer,
-            creditLimit: improvedLimit,
+            welcomeBalance: improvedLimit,
             timestamp: Date.now() // Update timestamp to show this is a new offer
           };
         }
       } else {
         // Fallback logic when no customer data or tier config is available
         const improvementFactor = 1.05 + (Math.random() * 0.10);
-        const newLimit = Math.round((userCreditLimit * improvementFactor) / 1000) * 1000;
-        const maxLimit = offer.creditLimit * 2;
+        const newLimit = Math.round((userWelcomeBalance * improvementFactor) / 1000) * 1000;
+        const maxLimit = offer.welcomeBalance * 2;
         const improvedLimit = Math.min(newLimit, maxLimit);
         
         return {
           ...offer,
-          creditLimit: improvedLimit,
+          welcomeBalance: improvedLimit,
           timestamp: Date.now()
         };
       }

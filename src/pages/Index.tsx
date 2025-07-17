@@ -32,7 +32,7 @@ const Index = () => {
     prioritizeLowestDTI: false,
     minCreditScore: 650,
     maxDebtBurdenRatio: 0.4,
-    defaultCreditLimit: 15000,
+    defaultWelcomeBalance: 15000,
   });
   
   // State for credit offer modal
@@ -113,8 +113,8 @@ const Index = () => {
     return result;
   }, [allCustomers, filters, settings]);
   
-  // Handle offering credit to a customer
-  const handleOfferCredit = (customer: Customer) => {
+  // Handle offering welcome balance to a customer
+  const handleOfferWelcomeBalance = (customer: Customer) => {
     setSelectedCustomer(customer);
     const offers = generateBankOffers(customer, settings);
     setBankOffers(offers);
@@ -142,14 +142,14 @@ const Index = () => {
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       {currentTab === "dashboard" ? (
         <>
-          <h1 className="text-2xl font-bold mb-6">Credit Card Applications</h1>
+          <h1 className="text-2xl font-bold mb-6">Welcome Balance Applications</h1>
           <FilterBar 
             onApplyFilters={handleApplyFilters} 
             initialFilters={filters} 
           />
           <CustomerTable 
             customers={filteredCustomers} 
-            onOfferCredit={handleOfferCredit} 
+            onOfferWelcomeBalance={handleOfferWelcomeBalance} 
           />
           <CreditOfferModal 
             isOpen={isModalOpen}

@@ -11,10 +11,10 @@ import { getCobrandPartner } from "@/utils/cobrandPartners";
 
 interface CustomerTableProps {
   customers: Customer[];
-  onOfferCredit: (customer: Customer) => void;
+  onOfferWelcomeBalance: (customer: Customer) => void;
 }
 
-const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
+const CustomerTable = ({ customers, onOfferWelcomeBalance }: CustomerTableProps) => {
   const getCardLogo = (cardName: string) => {
     const card = CARD_TYPES.find(c => c.name === cardName);
     return card ? card.logo : "default";
@@ -100,10 +100,11 @@ const CustomerTable = ({ customers, onOfferCredit }: CustomerTableProps) => {
                 </TableCell>
                 <TableCell className="text-center">
                   <Button
-                    onClick={() => onOfferCredit(customer)}
+                    onClick={() => onOfferWelcomeBalance(customer)}
                     className="bg-[#403E43] hover:bg-[#555555] text-[#F6F6F7] border border-[#8E9196] transition-all duration-300 hover:shadow-[0_0_15px_rgba(142,145,150,0.6)] hover:border-[#aaadb0]"
+                    title="Deposit a predefined welcome balance directly into the customer's account upon activation"
                   >
-                    Offer Credit
+                    Offer Welcome Balance
                   </Button>
                 </TableCell>
               </TableRow>

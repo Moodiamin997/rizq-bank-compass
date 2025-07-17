@@ -43,15 +43,15 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
       if (existingOffer) {
         const previousOffer: BankOffer = {
           bankName: "Your Previous Offer (Riyad Bank)",
-          creditLimit: existingOffer.creditLimit,
+          welcomeBalance: existingOffer.welcomeBalance,
           isWinner: false,
           isTied: false,
           timestamp: existingOffer.timestamp
         };
         filteredOffers.push(previousOffer);
         
-        // Pre-fill the credit limit input with the existing offer amount
-        setCreditLimit(existingOffer.creditLimit.toLocaleString());
+        // Pre-fill the welcome balance input with the existing offer amount
+        setCreditLimit(existingOffer.welcomeBalance.toLocaleString());
       }
       
       // Apply sophisticated tie-breaking logic
@@ -133,7 +133,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     // Create user offer
     const userOffer: BankOffer = {
       bankName: "Your Offer (Riyad Bank)",
-      creditLimit: creditLimitValue,
+      welcomeBalance: creditLimitValue,
       isWinner: false,
       isTied: false,
       timestamp: Date.now()
@@ -146,7 +146,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
     updatedOffers.push(userOffer);
     
     // Check if this creates a tie or if user is winning
-    const highestCompetitorOffer = Math.max(...updatedOffers.filter(o => !o.bankName.includes("Your")).map(o => o.creditLimit));
+    const highestCompetitorOffer = Math.max(...updatedOffers.filter(o => !o.bankName.includes("Your")).map(o => o.welcomeBalance));
     const isTiedOrWinning = creditLimitValue >= highestCompetitorOffer;
     
     // If tied or winning, simulate bank responses
@@ -200,7 +200,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
           customerName: customer.name,
           customerLocation: customer.location,
           timestamp: customer.applicationTime || Date.now(),
-          creditLimit: creditLimitValue,
+          welcomeBalance: creditLimitValue,
           status: finalStatus,
           competingBank: !userOfferWon ? tieBreakingResult.updatedOffers.find(o => o.isWinner)?.bankName : undefined,
           cardProduct: customer.appliedCard,
@@ -239,12 +239,12 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
       <DialogContent className="sm:max-w-[500px] bg-background border border-white/10" aria-describedby="credit-offer-description">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            {existingOffer ? `Update Credit Offer to ${customer.name}` : `Offer Credit to ${customer.name}`}
+            {existingOffer ? `Update Welcome Balance to ${customer.name}` : `Offer Welcome Balance to ${customer.name}`}
           </DialogTitle>
           <DialogDescription id="credit-offer-description">
             {existingOffer 
-              ? "Review and update your credit offer to this customer."
-              : "Review the details and make a credit offer to this customer."
+              ? "Review and update your welcome balance offer. This amount will be deposited directly into the customer's account upon activation."
+              : "Review the details and offer a welcome balance to this customer. This amount will be deposited directly into the customer's account upon activation."
             }
           </DialogDescription>
         </DialogHeader>
@@ -313,7 +313,7 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <p>{formatCurrency(offer.creditLimit)}</p>
+                    <p>{formatCurrency(offer.welcomeBalance)}</p>
                     {offer.isWinner ? (
                       <span className="text-xs font-semibold text-green-400 uppercase">
                         Winner
@@ -343,8 +343,8 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             <div className="flex items-center justify-between">
               <label htmlFor="creditLimit" className="block text-sm font-medium">
                 {existingOffer 
-                  ? `Your Credit Limit Offer (Previous: ${formatCurrency(existingOffer.creditLimit)})`
-                  : "Your Credit Limit Offer"
+                  ? `Your Welcome Balance Offer (Previous: ${formatCurrency(existingOffer.welcomeBalance)})`
+                  : "Your Welcome Balance Offer"
                 }
               </label>
               {showAutoSuggest && (
@@ -403,8 +403,9 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             onClick={handleSubmitOffer} 
             disabled={isSimulatingResponses}
             className="bg-green-600 hover:bg-green-700 text-white"
+            title="Deposit the welcome balance directly into customer's account upon activation"
           >
-            {isSimulatingResponses ? "Processing..." : existingOffer ? "Update Offer" : "Submit Offer"}
+            {isSimulatingResponses ? "Processing..." : existingOffer ? "Update Welcome Balance" : "Offer Welcome Balance"}
           </Button>
         </DialogFooter>
       </DialogContent>

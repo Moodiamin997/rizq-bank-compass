@@ -55,7 +55,7 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
             >
               <Link to="/offers">
                 <CreditCard className="mr-2 h-4 w-4" />
-                Credit Offers
+                Welcome Balance Offers
               </Link>
             </Button>
             <Button
@@ -88,7 +88,7 @@ const Layout = ({ children, currentTab, setCurrentTab }: LayoutProps) => {
               </Button>
               <h1 className="text-lg font-medium">
                 {currentTab === "dashboard" ? "Applications Dashboard" : 
-                 currentTab === "offers" ? "Credit Offers" : "Settings"}
+                 currentTab === "offers" ? "Welcome Balance Offers" : "Settings"}
               </h1>
             </div>
           </div>

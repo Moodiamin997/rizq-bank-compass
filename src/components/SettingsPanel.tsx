@@ -91,18 +91,19 @@ const SettingsPanel = ({ settings, onSettingsChange }: SettingsPanelProps) => {
           </div>
 
           <div className="space-y-3">
-            <Label htmlFor="default-credit-limit">Default Credit Limit (SAR)</Label>
+            <Label htmlFor="default-welcome-balance">Default Welcome Balance (SAR)</Label>
             <Input
-              id="default-credit-limit"
+              id="default-welcome-balance"
               type="number"
-              value={localSettings.defaultCreditLimit}
+              value={localSettings.defaultWelcomeBalance}
               onChange={(e) => 
                 setLocalSettings({ 
                   ...localSettings, 
-                  defaultCreditLimit: parseInt(e.target.value) || 0 
+                  defaultWelcomeBalance: parseInt(e.target.value) || 0 
                 })
               }
               className="bg-background border-white/10"
+              title="Predefined amount deposited directly into customer's account upon activation"
             />
           </div>
         </CardContent>

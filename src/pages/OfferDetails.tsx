@@ -80,7 +80,7 @@ const OfferDetails = () => {
         prioritizeLowestDTI: false,
         minCreditScore: 600,
         maxDebtBurdenRatio: 0.5,
-        defaultCreditLimit: 20000
+        defaultWelcomeBalance: 20000
       };
 
       const offers = generateBankOffers(reconstructedCustomer, defaultSettings);
@@ -110,21 +110,21 @@ const OfferDetails = () => {
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate("/offers")}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Credit Offers
-          </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/offers")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Welcome Balance Offers
+            </Button>
           <h1 className="text-2xl font-bold">Offer Details - {customer.name}</h1>
         </div>
 
         <div className="bg-secondary/40 p-4 rounded-md">
           <p className="text-sm text-muted-foreground">
-            View competing bank offers and submit additional credit offers for this pending application.
+            View competing bank offers and submit additional welcome balance offers for this pending application. Welcome balances are deposited directly into customer accounts upon activation.
           </p>
         </div>
 

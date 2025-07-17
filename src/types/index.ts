@@ -15,7 +15,7 @@ export interface Customer {
 
 export interface BankOffer {
   bankName: string;
-  creditLimit: number;
+  welcomeBalance: number;
   isWinner: boolean;
   isTied?: boolean;
   timestamp?: number;
@@ -36,7 +36,7 @@ export interface SettingsState {
   prioritizeLowestDTI: boolean;
   minCreditScore: number;
   maxDebtBurdenRatio: number;
-  defaultCreditLimit: number;
+  defaultWelcomeBalance: number;
 }
 
 export interface CreditOfferHistory {
@@ -44,7 +44,7 @@ export interface CreditOfferHistory {
   customerName: string;
   customerLocation: string;
   timestamp: number;
-  creditLimit: number;
+  welcomeBalance: number;
   status: "won" | "lost" | "pending" | "issued" | "cancelled";
   competingBank?: string;
   cardProduct?: string;
