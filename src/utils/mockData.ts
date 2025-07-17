@@ -77,55 +77,56 @@ export const generateMockCustomers = (count: number): Customer[] => {
 };
 
 export const generateBankOffers = (customer: Customer, settings: SettingsState) => {
-  // Use tier-based calculation instead of arbitrary base amount
-  const suggestedLimit = getAutoSuggestedLimit(customer.income, customer.appliedCard);
+  // Import the new bidding system
+  const { evaluateWelcomeBalanceBids } = require('./welcomeBalanceBidding');
   
-  // Apply adjustments based on credit score and debt ratio
-  const creditScoreFactor = Math.min(customer.creditScore / 750, 1.2); // Cap at 20% bonus
-  const debtFactor = Math.max(1 - customer.debtBurdenRatio, 0.6); // Min 60% of base
-  
-  // Generate realistic offers with tier-appropriate variations
-  const tierConfig = CARD_TIERS[customer.appliedCard];
-  const [minMultiplier, maxMultiplier] = tierConfig?.multiplierRange || [2, 4];
-  
-  // Each bank offers within the tier range, with some variation
-  const snbMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.8);
-  const anbMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.9);
-  const rajhiMultiplier = minMultiplier + (Math.random() * (maxMultiplier - minMultiplier) * 0.85);
-  
-  const snbOffer = Math.round((customer.income * snbMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
-  const anbOffer = Math.round((customer.income * anbMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
-  const rajhiOffer = Math.round((customer.income * rajhiMultiplier * creditScoreFactor * debtFactor) / 1000) * 1000;
-  
-  // Get current timestamp
-  const now = Date.now();
-  
-  const offers = [
-    { bankName: "SNB", welcomeBalance: snbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 3600000) },
-    { bankName: "ANB", welcomeBalance: anbOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 7200000) },
-    { bankName: "Rajhi Bank", welcomeBalance: rajhiOffer, isWinner: false, timestamp: now - Math.floor(Math.random() * 10800000) }
-  ];
-  
-  // Determine the winning offer based on settings
-  if (settings.prioritizeLowestDTI) {
-    // If prioritizing lowest DTI, adjust which offer wins based on debt burden ratio
-    const dtiAdjustedOffers = offers.map(offer => ({
-      ...offer,
-      adjustedValue: offer.welcomeBalance * (1 - customer.debtBurdenRatio)
-    }));
+  try {
+    // Use the new dynamic bidding system
+    const bidResponse = evaluateWelcomeBalanceBids(customer);
     
-    const winner = dtiAdjustedOffers.reduce((prev, current) => 
-      prev.adjustedValue > current.adjustedValue ? prev : current
-    );
+    if (bidResponse.winning_bid) {
+      // Convert the winning bid to the expected BankOffer format
+      const winningOffer: BankOffer = {
+        bankName: bidResponse.winning_bid.bank_name,
+        welcomeBalance: bidResponse.winning_bid.bid_amount,
+        isWinner: true,
+        timestamp: bidResponse.winning_bid.created_at
+      };
+      
+      // Convert other eligible bids to BankOffer format
+      const otherOffers: BankOffer[] = bidResponse.eligible_bids
+        .filter(bid => bid.bank_id !== bidResponse.winning_bid!.bank_id)
+        .map(bid => ({
+          bankName: bid.bank_name,
+          welcomeBalance: bid.bid_amount,
+          isWinner: false,
+          timestamp: bid.created_at
+        }));
+      
+      return [winningOffer, ...otherOffers];
+    } else {
+      // Fallback: No winning bid available
+      return [];
+    }
+  } catch (error) {
+    console.error('Error in dynamic bidding system, falling back to legacy system:', error);
     
-    offers.find(o => o.bankName === winner.bankName)!.isWinner = true;
-  } else {
-    // Otherwise, highest offer wins
+    // Fallback to simplified legacy system for welcome balance
+    const baseAmount = settings.defaultWelcomeBalance || 100;
+    const now = Date.now();
+    
+    const offers = [
+      { bankName: "SNB", welcomeBalance: baseAmount + Math.floor(Math.random() * 100), isWinner: false, timestamp: now },
+      { bankName: "ANB", welcomeBalance: baseAmount + Math.floor(Math.random() * 100), isWinner: false, timestamp: now },
+      { bankName: "Rajhi Bank", welcomeBalance: baseAmount + Math.floor(Math.random() * 100), isWinner: false, timestamp: now }
+    ];
+    
+    // Highest offer wins
     const highestOffer = Math.max(...offers.map(o => o.welcomeBalance));
     offers.find(o => o.welcomeBalance === highestOffer)!.isWinner = true;
+    
+    return offers;
   }
-  
-  return offers;
 };
 
 export const simulateImprovedBankOffers = (currentOffers: BankOffer[], userOffer: BankOffer, customer?: Customer): BankOffer[] => {

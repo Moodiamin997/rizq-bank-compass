@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { BankOffer, Customer } from "@/types";
+import { BankOffer, Customer, WelcomeBid } from "@/types";
 import { formatCurrency, simulateImprovedBankOffers } from "@/utils/mockData";
 import { resolveTieBreaking } from "@/utils/tieBreaking";
 import { validateCreditLimit, getAutoSuggestedLimit, getRiskLevelColor, CARD_TIERS } from "@/utils/creditLimitValidation";
@@ -11,6 +11,8 @@ import TimerDisplay from "@/components/TimerDisplay";
 import { v4 as uuidv4 } from 'uuid';
 import { useCreditOffers } from "@/contexts/CreditOfferContext";
 import { Info, Lightbulb } from "lucide-react";
+import { evaluateWelcomeBalanceBids, formatWelcomeBalanceOffer, formatBankTooltip } from "@/utils/welcomeBalanceBidding";
+import { evaluateBidsForCustomer } from "@/utils/welcomeBalanceAPI";
 
 interface CreditOfferModalProps {
   isOpen: boolean;
@@ -29,45 +31,61 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
   const [isSimulatingResponses, setIsSimulatingResponses] = useState(false);
   const [auditTrail, setAuditTrail] = useState<string[]>([]);
   const [showAutoSuggest, setShowAutoSuggest] = useState(false);
+  const [winningBid, setWinningBid] = useState<WelcomeBid | null>(null);
+  const [biddingAuditTrail, setBiddingAuditTrail] = useState<string[]>([]);
   
   // Reset state when modal opens with new data
   React.useEffect(() => {
-    if (isOpen && bankOffers) {
-      // Filter out any existing "Your Offer" entries when initializing
-      const filteredOffers = bankOffers.filter(offer => 
-        offer.bankName !== "Your Offer (Riyad Bank)" && 
-        offer.bankName !== "Your Previous Offer (Riyad Bank)"
-      );
-      
-      // If there's an existing offer, add it to the list and pre-fill the input
-      if (existingOffer) {
-        const previousOffer: BankOffer = {
-          bankName: "Your Previous Offer (Riyad Bank)",
-          welcomeBalance: existingOffer.welcomeBalance,
-          isWinner: false,
-          isTied: false,
-          timestamp: existingOffer.timestamp
-        };
-        filteredOffers.push(previousOffer);
-        
-        // Pre-fill the welcome balance input with the existing offer amount
-        setCreditLimit(existingOffer.welcomeBalance.toLocaleString());
-      }
-      
-      // Apply sophisticated tie-breaking logic
-      if (customer) {
-        const tieBreakingResult = resolveTieBreaking(filteredOffers, customer.id, customer.cobrandPartner);
-        setLocalBankOffers(tieBreakingResult.updatedOffers);
-        setAuditTrail(tieBreakingResult.auditTrail);
-      } else {
-        setLocalBankOffers(filteredOffers);
-        setAuditTrail([]);
-      }
-      
+    if (isOpen && customer) {
+      // Reset state
       setSubmitted(false);
+      setWinningBid(null);
+      setBiddingAuditTrail([]);
       
-      // Only clear credit limit if there's no existing offer
-      if (!existingOffer) {
+      // Automatically evaluate bids when modal opens
+      evaluateBidsForCustomer(customer).then(response => {
+        if (response.success && response.winning_bid) {
+          setWinningBid(response.winning_bid);
+          setBiddingAuditTrail(response.audit_trail);
+          
+          // If no existing offer, pre-fill with winning bid amount
+          if (!existingOffer) {
+            setCreditLimit(response.winning_bid.bid_amount.toLocaleString());
+          }
+        }
+      });
+      
+      // Handle existing offers and bank offers
+      if (bankOffers) {
+        const filteredOffers = bankOffers.filter(offer => 
+          offer.bankName !== "Your Offer (Riyad Bank)" && 
+          offer.bankName !== "Your Previous Offer (Riyad Bank)"
+        );
+        
+        if (existingOffer) {
+          const previousOffer: BankOffer = {
+            bankName: "Your Previous Offer (Riyad Bank)",
+            welcomeBalance: existingOffer.welcomeBalance,
+            isWinner: false,
+            isTied: false,
+            timestamp: existingOffer.timestamp
+          };
+          filteredOffers.push(previousOffer);
+          setCreditLimit(existingOffer.welcomeBalance.toLocaleString());
+        }
+        
+        if (customer) {
+          const tieBreakingResult = resolveTieBreaking(filteredOffers, customer.id, customer.cobrandPartner);
+          setLocalBankOffers(tieBreakingResult.updatedOffers);
+          setAuditTrail(tieBreakingResult.auditTrail);
+        } else {
+          setLocalBankOffers(filteredOffers);
+          setAuditTrail([]);
+        }
+      }
+      
+      // Only clear credit limit if there's no existing offer and no winning bid
+      if (!existingOffer && !winningBid) {
         setCreditLimit("");
       }
     }
@@ -239,13 +257,21 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
       <DialogContent className="sm:max-w-[500px] bg-background border border-white/10" aria-describedby="credit-offer-description">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            {existingOffer ? `Update Welcome Balance to ${customer.name}` : `Offer Welcome Balance to ${customer.name}`}
+            {winningBid ? formatWelcomeBalanceOffer(winningBid) : "Offer Welcome Balance"} to {customer.name}
           </DialogTitle>
           <DialogDescription id="credit-offer-description">
-            {existingOffer 
-              ? "Review and update your welcome balance offer. This amount will be deposited directly into the customer's account upon activation."
-              : "Review the details and offer a welcome balance to this customer. This amount will be deposited directly into the customer's account upon activation."
-            }
+            {winningBid ? (
+              <div className="space-y-2">
+                <p>{formatBankTooltip(winningBid)}</p>
+                <p className="text-sm text-blue-300">
+                  Winning bid from competitive auction: {winningBid.bank_name}
+                </p>
+              </div>
+            ) : existingOffer ? (
+              "Review and update your welcome balance offer. This amount will be deposited directly into the customer's account upon activation."
+            ) : (
+              "Review the details and offer a welcome balance to this customer. This amount will be deposited directly into the customer's account upon activation."
+            )}
           </DialogDescription>
         </DialogHeader>
         
@@ -285,7 +311,27 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             </div>
           </div>
           
-          <div className="mt-4">
+            {/* Bidding Audit Trail */}
+            {biddingAuditTrail.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium">Bidding Evaluation</h3>
+                  <div className="text-sm text-muted-foreground">
+                    Real-time auction results
+                  </div>
+                </div>
+                
+                <div className="space-y-1 max-h-32 overflow-y-auto bg-secondary/30 p-3 rounded-lg border border-white/10">
+                  {biddingAuditTrail.slice(-5).map((entry, index) => (
+                    <div key={index} className="text-xs text-muted-foreground font-mono">
+                      {entry}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-medium">Bank Offers</h3>
               {isSimulatingResponses && (
@@ -342,9 +388,11 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
           <div className="mt-4 space-y-3">
             <div className="flex items-center justify-between">
               <label htmlFor="creditLimit" className="block text-sm font-medium">
-                {existingOffer 
-                  ? `Your Welcome Balance Offer (Previous: ${formatCurrency(existingOffer.welcomeBalance)})`
-                  : "Your Welcome Balance Offer"
+                {winningBid 
+                  ? `Recommended Welcome Balance (SAR ${winningBid.bid_amount.toLocaleString()})`
+                  : existingOffer 
+                    ? `Your Welcome Balance Offer (Previous: ${formatCurrency(existingOffer.welcomeBalance)})`
+                    : "Your Welcome Balance Offer"
                 }
               </label>
               {showAutoSuggest && (
@@ -364,13 +412,24 @@ const CreditOfferModal = ({ isOpen, onClose, customer, bankOffers, existingOffer
             <div className="space-y-2">
               <Input
                 id="creditLimit"
-                placeholder="15,000"
+                placeholder={winningBid ? `SAR ${winningBid.bid_amount.toLocaleString()} (Recommended)` : "15,000"}
                 value={creditLimit}
                 onChange={handleCreditLimitChange}
                 className={`bg-secondary border-white/10 ${
                   validationResult ? getRiskLevelColor(validationResult.riskLevel) : ""
                 }`}
               />
+              
+              {winningBid && (
+                <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                  <p className="text-sm text-blue-300">
+                    <strong>Winning Bid:</strong> {winningBid.bank_name} - SAR {winningBid.bid_amount.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Selected from competitive auction with {biddingAuditTrail.length > 0 ? 'full audit trail' : 'available offers'}
+                  </p>
+                </div>
+              )}
               
               {validationResult && (
                 <div className={`flex items-start gap-2 p-2 rounded-md text-xs ${getRiskLevelColor(validationResult.riskLevel)}`}>

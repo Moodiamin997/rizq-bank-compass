@@ -33,6 +33,9 @@ const Index = () => {
     minCreditScore: 650,
     maxDebtBurdenRatio: 0.4,
     defaultWelcomeBalance: 15000,
+    minWelcomeBalance: 25,
+    maxWelcomeBalance: 500,
+    enableDynamicBidding: true
   });
   
   // State for credit offer modal

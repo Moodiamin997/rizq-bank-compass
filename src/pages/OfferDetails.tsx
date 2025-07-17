@@ -80,7 +80,10 @@ const OfferDetails = () => {
         prioritizeLowestDTI: false,
         minCreditScore: 600,
         maxDebtBurdenRatio: 0.5,
-        defaultWelcomeBalance: 20000
+        defaultWelcomeBalance: 20000,
+        minWelcomeBalance: 25,
+        maxWelcomeBalance: 500,
+        enableDynamicBidding: true
       };
 
       const offers = generateBankOffers(reconstructedCustomer, defaultSettings);

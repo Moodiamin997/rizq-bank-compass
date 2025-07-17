@@ -106,6 +106,51 @@ const SettingsPanel = ({ settings, onSettingsChange }: SettingsPanelProps) => {
               title="Predefined amount deposited directly into customer's account upon activation"
             />
           </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={localSettings.enableDynamicBidding}
+                onCheckedChange={(checked) => setLocalSettings({
+                  ...localSettings,
+                  enableDynamicBidding: checked
+                })}
+              />
+              <Label>Enable Dynamic Bidding System</Label>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Use competitive bank bidding for welcome balance offers (SAR 25-500+)
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Min Welcome Balance (SAR)</Label>
+              <Input
+                type="number"
+                value={localSettings.minWelcomeBalance}
+                onChange={(e) => setLocalSettings({
+                  ...localSettings,
+                  minWelcomeBalance: parseInt(e.target.value) || 25
+                })}
+                className="bg-background border-white/10"
+                min={25}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Max Welcome Balance (SAR)</Label>
+              <Input
+                type="number"
+                value={localSettings.maxWelcomeBalance}
+                onChange={(e) => setLocalSettings({
+                  ...localSettings,
+                  maxWelcomeBalance: parseInt(e.target.value) || 500
+                })}
+                className="bg-background border-white/10"
+                min={25}
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 

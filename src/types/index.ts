@@ -1,4 +1,3 @@
-
 export interface Customer {
   id: string;
   name: string;
@@ -21,6 +20,50 @@ export interface BankOffer {
   timestamp?: number;
 }
 
+// New interfaces for dynamic bidding system
+export interface EligibilityProfile {
+  income_min?: number;
+  income_max?: number;
+  age_min?: number;
+  age_max?: number;
+  creditScore_min?: number;
+  creditScore_max?: number;
+  regions?: string[];
+  nationalities?: string[];
+  cobrandPartners?: string[];
+  debtBurdenRatio_max?: number;
+}
+
+export interface WelcomeBid {
+  bank_id: string;
+  bank_name: string;
+  bank_logo?: string;
+  bid_amount: number; // SAR 25-500+
+  quota_remaining: number;
+  eligibility: EligibilityProfile;
+  campaign_id?: string;
+  expires_at?: number;
+  created_at: number;
+}
+
+export interface BankPartner {
+  id: string;
+  name: string;
+  logo: string;
+  daily_quota: number;
+  min_bid: number;
+  max_bid: number;
+  preferred_segments: string[];
+  bidding_strategy: 'conservative' | 'aggressive' | 'balanced';
+}
+
+export interface BidResponse {
+  winning_bid?: WelcomeBid;
+  eligible_bids: WelcomeBid[];
+  decision_reason: string;
+  audit_trail: string[];
+}
+
 export interface FilterState {
   appliedCard: string;
   ageRange: [number, number];
@@ -37,6 +80,10 @@ export interface SettingsState {
   minCreditScore: number;
   maxDebtBurdenRatio: number;
   defaultWelcomeBalance: number;
+  // New bidding system settings
+  minWelcomeBalance: number;
+  maxWelcomeBalance: number;
+  enableDynamicBidding: boolean;
 }
 
 export interface CreditOfferHistory {
@@ -66,4 +113,7 @@ export interface CreditOfferHistory {
     isValid: boolean;
     message: string;
   };
+  // New bidding system fields
+  winningBid?: WelcomeBid;
+  biddingAuditTrail?: string[];
 }
