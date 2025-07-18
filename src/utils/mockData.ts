@@ -1,6 +1,7 @@
 import { Customer, SettingsState, BankOffer } from "@/types";
 import { COBRAND_PARTNERS } from "./cobrandPartners";
 import { CARD_TIERS, getAutoSuggestedLimit, validateCreditLimit } from "./creditLimitValidation";
+import { evaluateWelcomeBalanceBids } from "./welcomeBalanceBidding";
 
 export const CARD_TYPES = [
   { name: "Visa Platinum", logo: "VISA" },
@@ -77,8 +78,6 @@ export const generateMockCustomers = (count: number): Customer[] => {
 };
 
 export const generateBankOffers = (customer: Customer, settings: SettingsState) => {
-  // Import the new bidding system
-  const { evaluateWelcomeBalanceBids } = require('./welcomeBalanceBidding');
   
   try {
     // Use the new dynamic bidding system
